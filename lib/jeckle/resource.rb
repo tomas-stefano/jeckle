@@ -15,8 +15,12 @@ module Jeckle
         self.class.name.underscore
       end
 
+      def all
+        get(resource_name)
+      end
+
       def find(id)
-        get(resource_action)
+        get(resource_action(id))
       end
 
       def resource_action(id)
