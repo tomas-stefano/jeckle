@@ -1,12 +1,7 @@
-require 'jeckle/version'
-require 'active_support/dependencies/autoload'
-require 'active_support/concern'
-require 'virtus'
 require 'active_model'
 require 'httparty'
+require 'virtus'
 
-module Jeckle
-  extend ActiveSupport::Autoload
+require 'jeckle/version'
 
-  autoload :Resource
-end
+require 'jeckle/resource'
