@@ -1,18 +1,23 @@
 module Jeckle
   module Resource
-    extend ActiveSupport::Concern
+    def self.included(base)
+      base.extend ClassMethods
 
-    included do
-      include HTTParty
-      include Virtus.model
-      include ActiveModel::Validations
+      base.include HTTParty
 
-      attribute :response
+      base.include Virtus.model
+
+      base.include ActiveModel::Validations
+      base.include ActiveModel::Naming
+
+      base.class_eval do
+        attribute :response
+      end
     end
 
     module ClassMethods
       def resource_name
-        self.class.name.underscore
+        model_name.element
       end
 
       def all
