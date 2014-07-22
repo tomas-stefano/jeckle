@@ -53,7 +53,8 @@ module Jeckle
     def request(http_method)
       return false if invalid?
 
-      @response = self.class.send(http_method, resource_name, headers: headers, body: params)
+      @response = self.class.send(http_method, resource_name,
+                                  headers: headers, body: params, query: query)
 
       @response.success?
     end
