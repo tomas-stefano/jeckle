@@ -1,7 +1,5 @@
 require 'bundler/setup'
 
-Bundler.require
-
 Dir['spec/support/**/*.rb'].each { |file| require File.expand_path(file) }
 
 require 'jeckle'
