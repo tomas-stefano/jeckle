@@ -1,5 +1,5 @@
 require 'active_model'
-require 'httparty'
+require 'faraday'
 require 'virtus'
 
 require 'jeckle/version'
