@@ -1,5 +1,8 @@
 # Jeckle
 
+[![Code Climate](https://codeclimate.com/github/tomas-stefano/jeckle.png)](https://codeclimate.com/github/tomas-stefano/jeckle)
+[![Test Coverage](https://codeclimate.com/github/tomas-stefano/jeckle/coverage.png)](https://codeclimate.com/github/tomas-stefano/jeckle)
+
 Wrap APIs with easyness and flexibility.
 
 <img src="http://www.toonopedia.com/hekljekl.jpg" alt="Jeckle" />
