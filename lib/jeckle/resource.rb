@@ -16,7 +16,7 @@ module Jeckle
     module ClassMethods
       def headers
         {
-          'Content-Type'    => 'application/json',
+          'Content-Type' => 'application/json'
         }
       end
 
@@ -25,10 +25,8 @@ module Jeckle
       end
 
       def api
-        return @api if @api
-
-        @api = Faraday.new(url: 'http://myapi.com').tap do |a|
-          a.headers = headers
+        @api ||= Faraday.new(url: 'http://myapi.com').tap do |request|
+          request.headers = headers
         end
       end
     end
