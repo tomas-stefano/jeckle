@@ -11,6 +11,8 @@ Wrap APIs with easyness and flexibility.
 often calls Heckle "old chap", "old thing", "old boy" or "old featherhead",
 indicating a close friendship between them.
 
+<small>*[Extracted from Wikipedia](http://en.wikipedia.org/wiki/Heckle_and_Jeckle)*</small>
+
 Let third party APIs be Heckle for your app's Jeckle.
 
 ## Installation
