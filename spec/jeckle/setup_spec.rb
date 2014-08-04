@@ -26,7 +26,7 @@ module Jeckle
         it 'raises no block given exception' do
           expect {
             Jeckle::Setup.register(:my_api)
-          }.to raise_exception(LocalJumpError, 'no block given (yield)')
+          }.to raise_exception(LocalJumpError)
         end
       end
     end
