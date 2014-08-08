@@ -1,11 +1,10 @@
 module Jeckle
   class Setup
     def self.register(name)
-      user_api = Jeckle::API.new
-      yield user_api
-      registered_apis[name] = user_api
-
-      user_api
+      Jeckle::API.new.tap do |user_api|
+        yield user_api
+        registered_apis[name] = user_api
+      end
     end
 
     def self.registered_apis
