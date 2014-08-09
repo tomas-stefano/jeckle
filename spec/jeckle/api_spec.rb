@@ -1,6 +1,4 @@
 require 'spec_helper'
 
-module Jeckle
-  describe API do
-  end
+RSpec.describe Jeckle::API do
 end
