@@ -10,6 +10,7 @@ RSpec.describe Jeckle::Setup do
           api.base_uri = 'http://my_super.api.com.br'
           api.headers = { 'Content-Type' => 'application/json' }
           api.logger = Logger.new(STDOUT)
+          api.basic_auth = { username: 'steven_seagal', password: 'youAlwaysLose' }
         end
       end
 
@@ -17,21 +18,39 @@ RSpec.describe Jeckle::Setup do
         expect(registered_apis).to have_key(:my_super_api)
       end
 
-      context 'with base uri' do
-        it 'assigns it to the api instance' do
+      describe 'base uri' do
+        it 'assigns to the api instance' do
           expect(registered_apis[:my_super_api].base_uri).to eq 'http://my_super.api.com.br'
         end
       end
 
-      context 'with headers' do
-        it 'assigns it to the api instance' do
+      describe 'headers' do
+        it 'assigns to the api instance' do
           expect(registered_apis[:my_super_api].headers).to eq 'Content-Type' => 'application/json'
         end
       end
 
-      context 'with logger' do
-        it 'assigns it to the api instance' do
+      describe 'logger' do
+        it 'assigns to the api instance' do
           expect(registered_apis[:my_super_api].logger).to be_kind_of Logger
+        end
+      end
+
+      describe 'basic auth' do
+        context 'when username and password are defined' do
+          it 'assigns to the api instance' do
+            expect(registered_apis[:my_super_api].basic_auth).to eq username: 'steven_seagal', password: 'youAlwaysLose'
+          end
+        end
+
+        context 'when neither username or password are defined' do
+          it 'raises no username or password exception' do
+            expect {
+              Jeckle::Setup.register :my_other_api do |api|
+                api.basic_auth = { foo: :bar, username: 'heckle' }
+              end
+            }.to raise_exception(Jeckle::API::NoUsernameOrPasswordError)
+          end
         end
       end
     end
