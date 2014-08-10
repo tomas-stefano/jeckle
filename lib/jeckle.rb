@@ -16,11 +16,7 @@ module Jeckle
   #    Jeckle.configure do |config|
   #      config.register :my_api_restful do |api|
   #        api.base_uri   = 'myapi.com'
-  #        api.logger     = Rails.logger # or any other logger
-  #        api.filter     = [:password, :sensitive_data] # show [FILTERED] in the logger.
-  #        api.options    = { version: 'v2' }
   #        api.headers    = { 'Content-Type' => 'application/whatever.complex.header.v2+json;charset=UTF-8' }
-  #        api.basic_auth = { username: 'chucknorris', password: 'nowThatYouKnowYouMustDie' }
   #      end
   #    end
   #

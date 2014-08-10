@@ -8,6 +8,7 @@ RSpec.describe Jeckle::Setup do
       before do
         Jeckle::Setup.register(:my_super_api) do |api|
           api.base_uri = 'http://my_super.api.com.br'
+          api.headers = { 'Content-Type' => 'application/json' }
         end
       end
 
@@ -15,9 +16,16 @@ RSpec.describe Jeckle::Setup do
         expect(registered_apis).to have_key(:my_super_api)
       end
 
-      it 'assigns the base uri to the api instance' do
-        expect(registered_apis[:my_super_api]).to_not be nil
-        expect(registered_apis[:my_super_api].base_uri).to eq 'http://my_super.api.com.br'
+      describe 'base uri' do
+        it 'assigns to the api instance' do
+          expect(registered_apis[:my_super_api].base_uri).to eq 'http://my_super.api.com.br'
+        end
+      end
+
+      describe 'headers' do
+        it 'assigns to the api instance' do
+          expect(registered_apis[:my_super_api].headers).to eq 'Content-Type' => 'application/json'
+        end
       end
     end
 
