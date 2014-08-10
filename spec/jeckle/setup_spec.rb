@@ -11,6 +11,7 @@ RSpec.describe Jeckle::Setup do
           api.headers = { 'Content-Type' => 'application/json' }
           api.logger = Logger.new(STDOUT)
           api.basic_auth = { username: 'steven_seagal', password: 'youAlwaysLose' }
+          api.namespaces = { version: 'v1' }
         end
       end
 
@@ -51,6 +52,12 @@ RSpec.describe Jeckle::Setup do
               end
             }.to raise_exception(Jeckle::API::NoUsernameOrPasswordError)
           end
+        end
+      end
+
+      describe 'namespaces' do
+        it 'assigns to the api instance' do
+          expect(registered_apis[:my_super_api].namespaces).to eq version: 'v1'
         end
       end
     end
