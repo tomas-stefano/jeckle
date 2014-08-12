@@ -12,6 +12,7 @@ RSpec.describe Jeckle::Setup do
           api.logger = Logger.new(STDOUT)
           api.basic_auth = { username: 'steven_seagal', password: 'youAlwaysLose' }
           api.namespaces = { version: 'v1' }
+          api.params = { hello: 'world' }
         end
       end
 
@@ -52,6 +53,12 @@ RSpec.describe Jeckle::Setup do
               end
             }.to raise_exception(Jeckle::API::NoUsernameOrPasswordError)
           end
+        end
+      end
+
+      describe 'query string' do
+        it 'assigns to the api instance' do
+          expect(registered_apis[:my_super_api].params).to eq(hello: 'world')
         end
       end
 
