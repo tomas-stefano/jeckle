@@ -1,6 +1,6 @@
 module Jeckle
   class API
-    attr_accessor :base_uri, :headers, :logger, :namespaces
+    attr_accessor :base_uri, :headers, :logger, :namespaces, :params
     attr_reader :basic_auth
 
     def basic_auth=(credentials)
