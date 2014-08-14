@@ -5,24 +5,13 @@ RSpec.describe Jeckle::Setup do
     context 'when block is given' do
       let(:registered_apis) { Jeckle::Setup.registered_apis }
 
-      before :all do
-        Jeckle::Setup.register(:my_super_api) do |api|
-          api.base_uri = 'http://my_super.api.com.br'
-          api.headers = { 'Content-Type' => 'application/json' }
-          api.logger = Logger.new(STDOUT)
-          api.basic_auth = { username: 'steven_seagal', password: 'youAlwaysLose' }
-          api.namespaces = { version: 'v1' }
-          api.params = { hello: 'world' }
-        end
-      end
-
       it 'returns a new registered API' do
         expect(registered_apis).to have_key(:my_super_api)
       end
 
       describe 'base uri' do
         it 'assigns to the api instance' do
-          expect(registered_apis[:my_super_api].base_uri).to eq 'http://my_super.api.com.br'
+          expect(registered_apis[:my_super_api].base_uri).to eq 'http://my-super-api.com.br'
         end
       end
 
