@@ -5,7 +5,7 @@ RSpec.describe Jeckle::Setup do
     context 'when block is given' do
       let(:registered_apis) { Jeckle::Setup.registered_apis }
 
-      before do
+      before :all do
         Jeckle::Setup.register(:my_super_api) do |api|
           api.base_uri = 'http://my_super.api.com.br'
           api.headers = { 'Content-Type' => 'application/json' }
@@ -39,20 +39,8 @@ RSpec.describe Jeckle::Setup do
       end
 
       describe 'basic auth' do
-        context 'when username and password are defined' do
-          it 'assigns to the api instance' do
-            expect(registered_apis[:my_super_api].basic_auth).to eq username: 'steven_seagal', password: 'youAlwaysLose'
-          end
-        end
-
-        context 'when neither username or password are defined' do
-          it 'raises no username or password exception' do
-            expect {
-              Jeckle::Setup.register :my_other_api do |api|
-                api.basic_auth = { foo: :bar, username: 'heckle' }
-              end
-            }.to raise_exception(Jeckle::API::NoUsernameOrPasswordError)
-          end
+        it 'assigns to the api instance' do
+          expect(registered_apis[:my_super_api].basic_auth).to eq username: 'steven_seagal', password: 'youAlwaysLose'
         end
       end
 
