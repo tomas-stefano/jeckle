@@ -21,9 +21,9 @@ module Jeckle
     end
 
     def base_uri
-      sufix = "/#{namespaces.values.join('/')}" if namespaces
+      suffix = "/#{namespaces.values.join('/')}" if namespaces
 
-      "#{@base_uri}#{sufix}"
+      "#{@base_uri}#{suffix}"
     end
 
     def params
