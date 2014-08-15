@@ -6,7 +6,7 @@ require 'jeckle/version'
 
 module Jeckle
   autoload :API, 'jeckle/api'
-  autoload :Resource, 'jeckle/resource'
+  autoload :Model, 'jeckle/model'
   autoload :Setup, 'jeckle/setup'
 
   # Configure APIs to be used on Jeckle::Resources.

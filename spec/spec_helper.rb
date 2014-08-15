@@ -17,8 +17,8 @@ RSpec.configure do |config|
       api.params = { hello: 'world' }
     end
 
-    class FakeResource
-      include Jeckle::Resource
+    class FakeModel
+      include Jeckle::Model
     end
   end
 end
