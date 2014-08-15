@@ -26,6 +26,10 @@ RSpec.describe Jeckle::API do
     it 'assigns basic auth headers' do
       expect(jeckle_api.connection.headers.keys).to include 'Authorization'
     end
+
+    it 'assigns params there will be used on all requests' do
+      expect(jeckle_api.connection.params).to eq 'hello' => 'world'
+    end
   end
 
   describe '#base_uri' do
@@ -64,6 +68,22 @@ RSpec.describe Jeckle::API do
 
       it 'raises a argument error NoUsernameOrPasswordError' do
         expect { jeckle_api.basic_auth = credentials }.to raise_error Jeckle::API::NoUsernameOrPasswordError
+      end
+    end
+  end
+
+  describe '#params' do
+    context 'when there are params' do
+      it 'assigns params hash' do
+        expect(jeckle_api.params).to eq hello: 'world'
+      end
+    end
+
+    context 'when there are no params' do
+      subject(:jeckle_api) { described_class.new }
+
+      it 'assigns an empty hash' do
+        expect(jeckle_api.params).to eq({})
       end
     end
   end

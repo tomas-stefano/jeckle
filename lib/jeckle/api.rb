@@ -1,12 +1,13 @@
 module Jeckle
   class API
-    attr_accessor :headers, :logger, :namespaces, :params
-    attr_writer :base_uri
+    attr_accessor :headers, :logger, :namespaces
+    attr_writer :base_uri, :params
     attr_reader :basic_auth
 
     def connection
       @connection ||= Faraday.new(url: base_uri).tap do |conn|
         conn.headers = headers
+        conn.params = params
         conn.basic_auth basic_auth[:username], basic_auth[:password] unless basic_auth.empty?
       end
     end
@@ -23,6 +24,10 @@ module Jeckle
       sufix = "/#{namespaces.values.join('/')}" if namespaces
 
       "#{@base_uri}#{sufix}"
+    end
+
+    def params
+      @params || {}
     end
   end
 
