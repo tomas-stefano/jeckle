@@ -20,7 +20,11 @@ RSpec.describe Jeckle::API do
     end
 
     it 'assigns api_headers' do
-      expect(jeckle_api.connection.headers).to match 'Content-Type' => 'application/json'
+      expect(jeckle_api.connection.headers).to include 'Content-Type' => 'application/json'
+    end
+
+    it 'assigns basic auth headers' do
+      expect(jeckle_api.connection.headers.keys).to include 'Authorization'
     end
   end
 
