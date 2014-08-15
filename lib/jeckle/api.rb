@@ -7,7 +7,7 @@ module Jeckle
     def connection
       @connection ||= Faraday.new(url: base_uri).tap do |conn|
         conn.headers = headers
-        conn.basic_auth *credentials unless basic_auth.empty?
+        conn.basic_auth basic_auth[:username], basic_auth[:password] unless basic_auth.empty?
       end
     end
 
@@ -23,12 +23,6 @@ module Jeckle
       sufix = "/#{namespaces.values.join('/')}" if namespaces
 
       "#{@base_uri}#{sufix}"
-    end
-
-    private
-
-    def credentials
-      [basic_auth[:username], basic_auth[:password]]
     end
   end
 
