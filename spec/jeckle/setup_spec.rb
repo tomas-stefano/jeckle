@@ -11,7 +11,7 @@ RSpec.describe Jeckle::Setup do
 
       describe 'base uri' do
         it 'assigns to the api instance' do
-          expect(registered_apis[:my_super_api].base_uri).to eq 'http://my-super-api.com.br'
+          expect(registered_apis[:my_super_api].base_uri).to eq 'http://my-super-api.com.br/api/v1'
         end
       end
 
@@ -41,7 +41,7 @@ RSpec.describe Jeckle::Setup do
 
       describe 'namespaces' do
         it 'assigns to the api instance' do
-          expect(registered_apis[:my_super_api].namespaces).to eq version: 'v1'
+          expect(registered_apis[:my_super_api].namespaces).to eq prefix: 'api', version: 'v1'
         end
       end
     end

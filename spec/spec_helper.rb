@@ -13,7 +13,7 @@ RSpec.configure do |config|
       api.headers = { 'Content-Type' => 'application/json' }
       api.logger = Logger.new(STDOUT)
       api.basic_auth = { username: 'steven_seagal', password: 'youAlwaysLose' }
-      api.namespaces = { version: 'v1' }
+      api.namespaces = { prefix: 'api', version: 'v1' }
       api.params = { hello: 'world' }
     end
 
