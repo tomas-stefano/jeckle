@@ -8,6 +8,7 @@ module Jeckle
   autoload :API, 'jeckle/api'
   autoload :Model, 'jeckle/model'
   autoload :Request, 'jeckle/request'
+  autoload :Resource, 'jeckle/resource'
   autoload :Setup, 'jeckle/setup'
 
   # Configure APIs to be used on Jeckle::Resources.

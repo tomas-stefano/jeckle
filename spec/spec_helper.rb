@@ -20,5 +20,9 @@ RSpec.configure do |config|
     class FakeModel
       include Jeckle::Model
     end
+
+    class FakeResource
+      include Jeckle::Resource
+    end
   end
 end
