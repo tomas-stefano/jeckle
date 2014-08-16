@@ -1,5 +1,6 @@
 require 'active_model'
 require 'faraday'
+require 'faraday_middleware'
 require 'virtus'
 
 require 'jeckle/version'
