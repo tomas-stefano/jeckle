@@ -1,11 +1,14 @@
 require 'active_model'
 require 'faraday'
+require 'faraday_middleware'
 require 'virtus'
 
 require 'jeckle/version'
 
 module Jeckle
   autoload :API, 'jeckle/api'
+  autoload :Model, 'jeckle/model'
+  autoload :Request, 'jeckle/request'
   autoload :Resource, 'jeckle/resource'
   autoload :Setup, 'jeckle/setup'
 

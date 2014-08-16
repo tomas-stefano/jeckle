@@ -20,10 +20,20 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activemodel', '>= 4.0'
   spec.add_dependency 'faraday'
+  spec.add_dependency 'faraday_middleware'
   spec.add_dependency 'virtus'
 
-  spec.add_development_dependency 'bundler', '~> 1.3'
+  spec.add_development_dependency 'bundler', '~> 1.6'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
-  spec.add_development_dependency 'pry'
+
+  if RUBY_ENGINE == 'rbx'
+    spec.add_development_dependency 'rubinius-compiler'
+    spec.add_development_dependency 'rubinius-debugger'
+  elsif RUBY_ENGINE == 'jruby'
+    spec.add_development_dependency 'pry'
+  else
+    spec.add_development_dependency 'pry-nav' if RUBY_VERSION < '2.0.0'
+    spec.add_development_dependency 'pry-byebug' if RUBY_VERSION >= '2.0.0'
+  end
 end

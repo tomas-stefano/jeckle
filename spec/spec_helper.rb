@@ -17,8 +17,16 @@ RSpec.configure do |config|
       api.params = { hello: 'world' }
     end
 
+    class FakeModel
+      include Jeckle::Model
+    end
+
     class FakeResource
       include Jeckle::Resource
+
+      default_api :my_super_api
+
+      attribute :id, Integer
     end
   end
 end

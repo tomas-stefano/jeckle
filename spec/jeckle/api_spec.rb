@@ -87,4 +87,20 @@ RSpec.describe Jeckle::API do
       end
     end
   end
+
+  describe '#headers' do
+    context 'when there are headers' do
+      it 'assigns headers hash' do
+        expect(jeckle_api.headers).to eq 'Content-Type' => 'application/json'
+      end
+    end
+
+    context 'when there are no headers' do
+      subject(:jeckle_api) { described_class.new }
+
+      it 'assigns an empty hash' do
+        expect(jeckle_api.headers).to eq({})
+      end
+    end
+  end
 end

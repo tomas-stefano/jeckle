@@ -11,4 +11,10 @@ module Jeckle
       @registered_apis ||= {}
     end
   end
+
+  class Jeckle::Setup::NoSuchAPIError < ArgumentError
+    def message(*args)
+      "No such API '#{super}'"
+    end
+  end
 end
