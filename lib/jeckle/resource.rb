@@ -11,6 +11,16 @@ module Jeckle
       def resource_name
         model_name.plural
       end
+
+      def default_api(registered_api_name)
+        api_mapping[:default_api] = Jeckle::Setup.registered_apis.fetch(registered_api_name)
+      rescue KeyError => e
+        raise Jeckle::Setup::NoSuchAPIError.new(registered_api_name)
+      end
+
+      def api_mapping
+        @api_mapping ||= {}
+      end
     end
   end
 end
