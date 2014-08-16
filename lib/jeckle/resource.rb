@@ -21,6 +21,14 @@ module Jeckle
       def api_mapping
         @api_mapping ||= {}
       end
+
+      def find(id)
+        endpoint = "#{resource_name}/#{id}"
+
+        request = Jeckle::Request.run_request api_mapping[:default_api], endpoint
+
+        new request.response.body
+      end
     end
   end
 end

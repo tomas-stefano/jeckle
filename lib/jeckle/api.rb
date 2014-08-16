@@ -9,6 +9,13 @@ module Jeckle
         conn.headers = headers
         conn.params = params
         conn.basic_auth basic_auth[:username], basic_auth[:password] if basic_auth
+
+        conn.response :logger, logger
+
+        # OPTIMIZE: Make those middleware optional and extensible
+        conn.request :json
+        conn.response :json
+        conn.response :raise_error
       end
     end
 
