@@ -25,9 +25,13 @@ module Jeckle
       def find(id)
         endpoint = "#{resource_name}/#{id}"
 
-        request = Jeckle::Request.run_request api_mapping[:default_api], endpoint
+        new request(endpoint).response.body
+      end
 
-        new request.response.body
+      private
+
+      def request(endpoint, options = {})
+        Jeckle::Request.run_request api_mapping[:default_api], endpoint
       end
     end
   end
