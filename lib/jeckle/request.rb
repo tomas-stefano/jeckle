@@ -1,22 +1,30 @@
 module Jeckle
   class Request
-    attr_accessor :response
-    attr_reader :api, :body, :method
+    attr_reader :api, :body, :method, :params, :response, :endpoint
 
-    def initialize(api, options)
+    def initialize(api, endpoint, options = {})
       @api = api
 
       @method = options.delete(:method) || :get
       @body = options.delete(:body) if %w(post put).include?(method.to_s)
+
+      @endpoint = endpoint || '/'
+      @params = options
+
+      @response = perform_api_request
     end
 
-    def self.run_request(api, endpoint, options = {})
-      new(api, options).tap do |jeckle_request|
-        jeckle_request.response = api.connection.public_send jeckle_request.method do |api_request|
-          api_request.url endpoint
-          api_request.params = options
-          api_request.body = jeckle_request.body if jeckle_request.body
-        end
+    def self.run(*args)
+      new *args
+    end
+
+    private
+
+    def perform_api_request
+      api.connection.public_send method do |api_request|
+        api_request.url endpoint
+        api_request.params = params
+        api_request.body = body if body
       end
     end
   end

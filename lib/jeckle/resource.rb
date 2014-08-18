@@ -24,20 +24,21 @@ module Jeckle
 
       def find(id)
         endpoint = "#{resource_name}/#{id}"
+        attributes = run_request(endpoint).response.body
 
-        new request(endpoint).response.body
+        new attributes
       end
 
       def search(query = {})
-        collection = request(resource_name, query).response.body || []
+        collection = run_request(resource_name, query).response.body || []
 
         collection.collect { |attrs| new attrs }
       end
 
       private
 
-      def request(endpoint, options = {})
-        Jeckle::Request.run_request api_mapping[:default_api], endpoint, options
+      def run_request(endpoint, options = {})
+        Jeckle::Request.run api_mapping[:default_api], endpoint, options
       end
     end
   end
