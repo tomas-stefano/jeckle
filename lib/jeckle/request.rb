@@ -8,7 +8,7 @@ module Jeckle
       @method = options.delete(:method) || :get
       @body = options.delete(:body) if %w(post put).include?(method.to_s)
 
-      @endpoint = endpoint || '/'
+      @endpoint = endpoint
       @params = options
 
       @response = perform_api_request
@@ -24,7 +24,7 @@ module Jeckle
       api.connection.public_send method do |api_request|
         api_request.url endpoint
         api_request.params = params
-        api_request.body = body if body
+        api_request.body = body
       end
     end
   end

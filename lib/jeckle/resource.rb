@@ -29,8 +29,8 @@ module Jeckle
         new attributes
       end
 
-      def search(query = {})
-        collection = run_request(resource_name, query).response.body || []
+      def search(params = {})
+        collection = run_request(resource_name, params).response.body || []
 
         collection.collect { |attrs| new attrs }
       end
