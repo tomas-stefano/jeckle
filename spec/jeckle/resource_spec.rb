@@ -49,16 +49,50 @@ RSpec.describe Jeckle::Resource do
     let(:fake_request) { OpenStruct.new response: OpenStruct.new(body: { id: 1001 }) }
 
     it 'calls default API connection with GET' do
-      expect(Jeckle::Request).to receive(:run_request)
-        .with(api, 'fake_resources/1001').and_return(fake_request)
+      expect(Jeckle::Request).to receive(:run)
+        .with(api, 'fake_resources/1001', {}).and_return(fake_request)
 
       FakeResource.find 1001
     end
 
     it 'returns an instance of resource' do
-      allow(Jeckle::Request).to receive(:run_request).and_return(fake_request)
+      allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
       expect(FakeResource.find 1001).to be_an_instance_of(FakeResource)
+    end
+  end
+
+  describe '.search' do
+    let(:query) { { name: 'cocada' } }
+
+    context 'when there are results' do
+      let(:fake_request) { OpenStruct.new response: OpenStruct.new(body: [{ id: 1001 }, { id: 1002 }]) }
+
+      it 'calls default API connection with GET and search params' do
+        expect(Jeckle::Request).to receive(:run)
+          .with(api, 'fake_resources', query).and_return(fake_request)
+
+        FakeResource.search query
+      end
+
+      it 'returns an Array of resources' do
+        allow(Jeckle::Request).to receive(:run).and_return(fake_request)
+
+        expect(FakeResource.search query).to match [
+          an_instance_of(FakeResource),
+          an_instance_of(FakeResource)
+        ]
+      end
+    end
+
+    context 'when there are no results' do
+      let(:fake_request) { OpenStruct.new response: OpenStruct.new(body: nil) }
+
+      it 'returns an empty Array' do
+        allow(Jeckle::Request).to receive(:run).and_return(fake_request)
+
+        expect(FakeResource.search query).to match []
+      end
     end
   end
 end

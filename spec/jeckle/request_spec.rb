@@ -11,8 +11,8 @@ RSpec.describe Jeckle::Request do
     allow(api.connection).to receive(:builder).and_return(fake_builder)
   end
 
-  describe '.run_request' do
-    after { described_class.run_request api, endpoint, options }
+  describe '.run' do
+    after { described_class.run api, endpoint, options }
 
     context 'GET' do
       let(:options) { {} }
