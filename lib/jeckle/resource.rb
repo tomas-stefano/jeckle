@@ -35,8 +35,6 @@ module Jeckle
         collection.collect { |attrs| new attrs }
       end
 
-      private
-
       def run_request(endpoint, options = {})
         Jeckle::Request.run api_mapping[:default_api], endpoint, options
       end
