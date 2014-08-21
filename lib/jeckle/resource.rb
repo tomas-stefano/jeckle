@@ -9,7 +9,7 @@ module Jeckle
 
     module ClassMethods
       def resource_name
-        model_name.plural
+        model_name.element.pluralize
       end
 
       def default_api(registered_api_name)
