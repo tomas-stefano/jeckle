@@ -17,6 +17,17 @@ RSpec.describe Jeckle::Resource do
     it 'returns resource name based on class name' do
       expect(FakeResource.resource_name).to eq 'fake_resources'
     end
+
+    context 'when resource class is namespaced' do
+      before do
+        MySuperApi = Module.new
+        MySuperApi::FakeResource = Class.new(::FakeResource)
+      end
+
+      it 'ignores namespace' do
+        expect(MySuperApi::FakeResource.resource_name).to eq 'fake_resources'
+      end
+    end
   end
 
   describe '.api_mapping' do
