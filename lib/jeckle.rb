@@ -5,26 +5,15 @@ require 'virtus'
 
 require 'jeckle/version'
 
+%w(setup api model request resource exceptions).each do |file|
+  require "jeckle/#{file}"
+end
+
 module Jeckle
-  autoload :API, 'jeckle/api'
-  autoload :Model, 'jeckle/model'
-  autoload :Request, 'jeckle/request'
-  autoload :Resource, 'jeckle/resource'
-  autoload :Setup, 'jeckle/setup'
+  include Jeckle::Exceptions
 
   # Configure APIs to be used on Jeckle::Resources.
-  #
-  # @example
-  #
-  #    Jeckle.configure do |config|
-  #      config.register :my_api_restful do |api|
-  #        api.basic_auth = { username: 'chucknorris', password: 'nowThatYouKnowYouMustDie' }
-  #        api.namespaces = { version: 'v2' }
-  #        api.base_uri = 'myapi.com'
-  #        api.headers = { 'Content-Type' => 'application/whatever.complex.header.v2+json;charset=UTF-8' }
-  #        api.logger = Rails.logger # or any other logger
-  #      end
-  #    end
+  # See Jeckle::Setup for more information.
   #
   def self.configure
     yield Jeckle::Setup
