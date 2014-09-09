@@ -22,7 +22,7 @@ module Jeckle
     def basic_auth=(credential_params)
       [:username, :password].all? do |key|
         credential_params.has_key? key
-      end || raise(NoUsernameOrPasswordError.new credential_params)
+      end || raise(Jeckle::NoUsernameOrPasswordError.new credential_params)
 
       @basic_auth = credential_params
     end
@@ -39,12 +39,6 @@ module Jeckle
 
     def headers
       @headers || {}
-    end
-  end
-
-  class API::NoUsernameOrPasswordError < ArgumentError
-    def message(*args)
-      "No such keys \"username\" and \"password\" on `basic_auth` #{super} definition"
     end
   end
 end

@@ -67,7 +67,7 @@ RSpec.describe Jeckle::API do
       let(:credentials) { {} }
 
       it 'raises a argument error NoUsernameOrPasswordError' do
-        expect { jeckle_api.basic_auth = credentials }.to raise_error Jeckle::API::NoUsernameOrPasswordError
+        expect { jeckle_api.basic_auth = credentials }.to raise_error Jeckle::NoUsernameOrPasswordError
       end
     end
   end
