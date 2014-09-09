@@ -15,7 +15,7 @@ module Jeckle
       def default_api(registered_api_name)
         api_mapping[:default_api] = Jeckle::Setup.registered_apis.fetch(registered_api_name)
       rescue KeyError => e
-        raise Jeckle::NoSuchAPIError.new(registered_api_name)
+        raise Jeckle::NoSuchAPIError, registered_api_name
       end
 
       def api_mapping
