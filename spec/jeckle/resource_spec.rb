@@ -51,7 +51,7 @@ RSpec.describe Jeckle::Resource do
 
     context 'when defining an inexistent API' do
       it 'raises NoSuchAPIError' do
-        expect { FakeResource.default_api :unknow_api }.to raise_error Jeckle::NoSuchAPIError
+        expect { FakeResource.default_api :unknown_api }.to raise_error Jeckle::NoSuchAPIError
       end
     end
   end
