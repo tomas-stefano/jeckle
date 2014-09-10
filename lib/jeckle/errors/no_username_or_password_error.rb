@@ -1,5 +1,5 @@
 module Jeckle
-  module Exceptions
+  module Errors
     class NoUsernameOrPasswordError < ArgumentError
       def initialize(credentials)
         message = %{

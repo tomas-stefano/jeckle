@@ -5,12 +5,12 @@ require 'virtus'
 
 require 'jeckle/version'
 
-%w(setup api model request resource exceptions).each do |file|
-  require "jeckle/#{file}"
+%w(setup api model request resource errors).each do |file_name|
+  require "jeckle/#{file_name}"
 end
 
 module Jeckle
-  include Jeckle::Exceptions
+  include Jeckle::Errors
 
   # Configure APIs to be used on Jeckle::Resources.
   # See Jeckle::Setup for more information.

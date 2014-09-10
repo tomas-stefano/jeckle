@@ -1,5 +1,5 @@
 module Jeckle
-  module Exceptions
+  module Errors
     class NoSuchAPIError < ArgumentError
       def initialize(api)
         message = %{
