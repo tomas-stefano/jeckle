@@ -1,4 +1,3 @@
-
 Jeckle::Setup.register(:my_super_api) do |api|
   api.base_uri   = 'http://my-super-api.com.br'
   api.headers    = { 'Content-Type' => 'application/json' }
