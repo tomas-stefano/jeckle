@@ -36,6 +36,12 @@ RSpec.describe Jeckle::Resource do
         default_api: an_instance_of(Jeckle::API)
       )
     end
+
+    it 'gets inherited for child classes' do
+      expect(Class.new(FakeResource).api_mapping).to match(
+        default_api: an_instance_of(Jeckle::API)
+      )
+    end
   end
 
   describe '.default_api' do
