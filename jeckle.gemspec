@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Jeckle::VERSION
   spec.authors       = ['Tomas D\'Stefano', 'Brenno Costa']
   spec.email         = ['tomas_stefano@successoft.com', 'brennolncosta@gmail.com']
-  spec.description   = %q{Simple module for build client APIs}
-  spec.summary       = %q{Simple module for build client APIs}
+  spec.description   = %q{Simple module for building client APIs}
+  spec.summary       = %q{Simple module for building client APIs}
   spec.homepage      = 'https://github.com/tomas-stefano/jeckle'
   spec.license       = 'MIT'
 

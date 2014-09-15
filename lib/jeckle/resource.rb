@@ -8,6 +8,12 @@ module Jeckle
     end
 
     module ClassMethods
+      def inherited(base)
+        base.class_eval do
+          @api_mapping = superclass.api_mapping.dup
+        end
+      end
+
       def resource_name
         model_name.element.pluralize
       end

@@ -36,6 +36,23 @@ RSpec.describe Jeckle::Resource do
         default_api: an_instance_of(Jeckle::API)
       )
     end
+
+    context 'when resource is inherited' do
+      let(:inherited_class) { Class.new(FakeResource) }
+
+      it "contains the parent's api_mapping" do
+        expect(inherited_class.api_mapping).to eq FakeResource.api_mapping
+      end
+
+      context 'when api_mapping is changed' do
+        it "does not affect the parent" do
+          inherited_class.default_api :another_api
+
+          expect(FakeResource.api_mapping).not_to eq inherited_class.api_mapping
+          expect(FakeResource.api_mapping[:default_api]).to eq Jeckle::Setup.registered_apis[:my_super_api]
+        end
+      end
+    end
   end
 
   describe '.default_api' do
