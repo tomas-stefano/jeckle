@@ -10,8 +10,6 @@ require 'jeckle/version'
 end
 
 module Jeckle
-  include Jeckle::Errors
-
   # Configure APIs to be used on Jeckle::Resources.
   # See Jeckle::Setup for more information.
   #
