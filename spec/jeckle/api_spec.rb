@@ -130,10 +130,10 @@ RSpec.describe Jeckle::API do
     end
 
     context 'when no block is given' do
-      it 'raises error' do
+      it 'raises ArgumentError' do
         expect {
           jeckle_api.middlewares
-        }.to raise_error ArgumentError, /no block given/
+        }.to raise_error Jeckle::ArgumentError, /A block is required when configuring API middlewares/
       end
     end
   end

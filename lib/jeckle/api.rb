@@ -40,7 +40,7 @@ module Jeckle
     end
 
     def middlewares(&block)
-      raise ArgumentError, 'no block given' unless block_given?
+      raise Jeckle::ArgumentError, 'A block is required when configuring API middlewares' unless block_given?
 
       @middlewares_block = block
     end

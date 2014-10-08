@@ -1,4 +1,6 @@
 module Jeckle
+  class ArgumentError < ::ArgumentError; end
+
   class NoSuchAPIError < ArgumentError
     def initialize(api)
       message = %{The API name '#{api}' doesn't exist in Jeckle definitions.
