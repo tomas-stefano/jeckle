@@ -2,6 +2,7 @@ language: ruby
 script:
   - bundle exec rspec spec
 rvm:
+  - rbx-2
   - jruby-head
   - ruby-head
   - ruby
