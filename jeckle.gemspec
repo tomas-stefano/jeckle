@@ -19,13 +19,13 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activemodel', '>= 4.0'
-  spec.add_dependency 'faraday'
+  spec.add_dependency 'faraday', '~> 0.9'
   spec.add_dependency 'faraday_middleware'
-  spec.add_dependency 'virtus'
+  spec.add_dependency 'virtus', '~> 1.0'
 
   spec.add_development_dependency 'bundler', '~> 1.6'
   spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'rspec', '~> 3.1'
 
   if RUBY_ENGINE == 'rbx'
     spec.add_development_dependency 'rubinius-compiler'
