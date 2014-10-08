@@ -62,3 +62,10 @@ module SomeService
   end
 end
 ```
+
+## Roadmap
+
+- Faraday middleware abstraction
+- Per action API
+- Comprehensive restful actions
+- Testability
