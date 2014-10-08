@@ -8,14 +8,10 @@ module Jeckle
       @connection ||= Faraday.new(url: base_uri).tap do |conn|
         conn.headers = headers
         conn.params = params
-        conn.basic_auth basic_auth[:username], basic_auth[:password] if basic_auth
-
         conn.response :logger, logger
 
-        # OPTIMIZE: Make those middleware optional and extensible
-        conn.request :json
-        conn.response :json
-        conn.response :raise_error
+        conn.basic_auth basic_auth[:username], basic_auth[:password] if basic_auth
+        conn.instance_exec &@middlewares_block if @middlewares_block
       end
     end
 
@@ -39,6 +35,12 @@ module Jeckle
 
     def headers
       @headers || {}
+    end
+
+    def middlewares(&block)
+      raise ArgumentError, 'no block given' unless block_given?
+
+      @middlewares_block = block
     end
   end
 end

@@ -8,7 +8,7 @@ RSpec.describe Jeckle::API do
 
     let(:fake_faraday_connection) { Faraday::Connection.new }
 
-    it 'defines a Faraday connection' do
+    it 'returns a Faraday connection' do
       expect(jeckle_api.connection).to be_kind_of Faraday::Connection
     end
 
@@ -29,6 +29,22 @@ RSpec.describe Jeckle::API do
 
     it 'assigns params there will be used on all requests' do
       expect(jeckle_api.connection.params).to eq 'hello' => 'world'
+    end
+
+    context 'when middlewares_block is set' do
+      before do
+        jeckle_api.middlewares do
+          request :retry, max: 2, interval: 0.05
+          request :instrumentation
+        end
+      end
+
+      it 'adds middlewares on connection middleware stack' do
+        expect(jeckle_api.connection.builder.handlers.last(2)).to eq [
+          Faraday::Request::Retry,
+          Faraday::Request::Instrumentation
+        ]
+      end
     end
   end
 
@@ -100,6 +116,24 @@ RSpec.describe Jeckle::API do
 
       it 'assigns an empty hash' do
         expect(jeckle_api.headers).to eq({})
+      end
+    end
+  end
+
+  describe '#middlewares' do
+    context 'when a block is given' do
+      it 'assigns middleware_block' do
+        jeckle_api.middlewares { 123 }
+
+        expect(jeckle_api.instance_variable_get('@middlewares_block')).not_to be_nil
+      end
+    end
+
+    context 'when no block is given' do
+      it 'raises error' do
+        expect {
+          jeckle_api.middlewares
+        }.to raise_error ArgumentError, /no block given/
       end
     end
   end
