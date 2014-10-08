@@ -1,5 +1,6 @@
 # Jeckle
 
+[![Build Status](https://travis-ci.org/tomas-stefano/jeckle.svg?branch=master)](https://travis-ci.org/tomas-stefano/jeckle)
 [![Code Climate](https://codeclimate.com/github/tomas-stefano/jeckle.png)](https://codeclimate.com/github/tomas-stefano/jeckle)
 [![Test Coverage](https://codeclimate.com/github/tomas-stefano/jeckle/coverage.png)](https://codeclimate.com/github/tomas-stefano/jeckle)
 
