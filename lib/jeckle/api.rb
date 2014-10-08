@@ -1,21 +1,17 @@
 module Jeckle
   class API
-    attr_accessor :logger, :namespaces
-    attr_writer :base_uri, :params, :headers
+    attr_accessor :logger
+    attr_writer :base_uri, :namespaces, :params, :headers
     attr_reader :basic_auth
 
     def connection
       @connection ||= Faraday.new(url: base_uri).tap do |conn|
         conn.headers = headers
         conn.params = params
-        conn.basic_auth basic_auth[:username], basic_auth[:password] if basic_auth
-
         conn.response :logger, logger
 
-        # OPTIMIZE: Make those middleware optional and extensible
-        conn.request :json
-        conn.response :json
-        conn.response :raise_error
+        conn.basic_auth basic_auth[:username], basic_auth[:password] if basic_auth
+        conn.instance_exec &@middlewares_block if @middlewares_block
       end
     end
 
@@ -28,9 +24,7 @@ module Jeckle
     end
 
     def base_uri
-      suffix = "/#{namespaces.values.join('/')}" if namespaces
-
-      "#{@base_uri}#{suffix}"
+      [@base_uri, *namespaces.values].join '/'
     end
 
     def params
@@ -39,6 +33,16 @@ module Jeckle
 
     def headers
       @headers || {}
+    end
+
+    def namespaces
+      @namespaces || {}
+    end
+
+    def middlewares(&block)
+      raise Jeckle::ArgumentError, 'A block is required when configuring API middlewares' unless block_given?
+
+      @middlewares_block = block
     end
   end
 end
