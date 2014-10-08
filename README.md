@@ -1,5 +1,6 @@
 # Jeckle
 
+[![Build Status](https://travis-ci.org/tomas-stefano/jeckle.svg?branch=master)](https://travis-ci.org/tomas-stefano/jeckle)
 [![Code Climate](https://codeclimate.com/github/tomas-stefano/jeckle.png)](https://codeclimate.com/github/tomas-stefano/jeckle)
 [![Test Coverage](https://codeclimate.com/github/tomas-stefano/jeckle/coverage.png)](https://codeclimate.com/github/tomas-stefano/jeckle)
 
@@ -25,6 +26,46 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+### For Rails applications
 
-    $ gem install jeckle
+We recommend to create a initializer:
+
+```ruby
+# config/initializers/jeckle.rb
+
+Jeckle.configure do |config|
+  config.register :some_service do |api|
+    api.base_uri = 'http://api.someservice.com'
+    api.headers = {
+      'Accept' => 'application/json'
+    }
+    api.namespaces = { prefix: 'api', version: 'v1' }
+    api.logger = Rails.logger
+  end
+end
+```
+
+And then put your API stuff scoped inside a `services` folder:
+
+```ruby
+# app/services/some_service/models/my_resource.rb
+
+module SomeService
+  module Models
+    class MyResource
+      include Jeckle::Resource
+
+      default_api :some_service
+
+      attribute :id
+    end
+  end
+end
+```
+
+## Roadmap
+
+- Faraday middleware abstraction
+- Per action API
+- Comprehensive restful actions
+- Testability
