@@ -1,12 +1,13 @@
 module Jeckle
   class Request
-    attr_reader :api, :body, :method, :params, :response, :endpoint
+    attr_reader :api, :body, :headers, :method, :params, :response, :endpoint
 
     def initialize(api, endpoint, options = {})
       @api = api
 
       @method = options.delete(:method) || :get
       @body = options.delete(:body) if %w(post put).include?(method.to_s)
+      @headers = options.delete(:headers)
 
       @endpoint = endpoint
       @params = options
@@ -25,6 +26,7 @@ module Jeckle
         api_request.url endpoint
         api_request.params = params
         api_request.body = body
+        api_request.headers = api_request.headers.merge(headers) if headers
       end
     end
   end
