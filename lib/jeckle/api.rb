@@ -1,7 +1,7 @@
 module Jeckle
   class API
-    attr_accessor :logger, :namespaces
-    attr_writer :base_uri, :params, :headers
+    attr_accessor :logger
+    attr_writer :base_uri, :namespaces, :params, :headers
     attr_reader :basic_auth
 
     def connection
@@ -24,9 +24,7 @@ module Jeckle
     end
 
     def base_uri
-      suffix = "/#{namespaces.values.join('/')}" if namespaces
-
-      "#{@base_uri}#{suffix}"
+      [@base_uri, *namespaces.values].join '/'
     end
 
     def params
@@ -35,6 +33,10 @@ module Jeckle
 
     def headers
       @headers || {}
+    end
+
+    def namespaces
+      @namespaces || {}
     end
 
     def middlewares(&block)
