@@ -1,11 +1,11 @@
 module Jeckle
   class API
     attr_accessor :logger
-    attr_writer :base_uri, :namespaces, :params, :headers
-    attr_reader :basic_auth
+    attr_writer :base_uri, :namespaces, :params, :headers, :open_timeout, :read_timeout
+    attr_reader :basic_auth, :request_timeout
 
     def connection
-      @connection ||= Faraday.new(url: base_uri).tap do |conn|
+      @connection ||= Faraday.new(url: base_uri, request: timeout).tap do |conn|
         conn.headers = headers
         conn.params = params
         conn.response :logger, logger
@@ -43,6 +43,13 @@ module Jeckle
       raise Jeckle::ArgumentError, 'A block is required when configuring API middlewares' unless block_given?
 
       @middlewares_block = block
+    end
+
+    def timeout
+      {}.tap do |t|
+        t[:open_timeout] = @open_timeout if @open_timeout
+        t[:timeout] = @read_timeout if @read_timeout
+      end
     end
   end
 end
