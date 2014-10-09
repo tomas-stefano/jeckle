@@ -41,6 +41,7 @@ Jeckle.configure do |config|
     }
     api.namespaces = { prefix: 'api', version: 'v1' }
     api.logger = Rails.logger
+    api.read_timeout = 5
   end
 end
 ```

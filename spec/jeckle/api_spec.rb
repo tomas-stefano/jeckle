@@ -13,7 +13,9 @@ RSpec.describe Jeckle::API do
     end
 
     it 'caches the connection' do
-      expect(Faraday).to receive(:new).once.and_return(fake_faraday_connection).with(url: jeckle_api.base_uri)
+      expect(Faraday).to receive(:new).once.and_return(fake_faraday_connection)
+        .with(url: jeckle_api.base_uri, request: jeckle_api.timeout)
+
       expect(fake_faraday_connection).to receive(:tap).once.and_call_original
 
       10.times { jeckle_api.connection }
@@ -29,6 +31,11 @@ RSpec.describe Jeckle::API do
 
     it 'assigns params there will be used on all requests' do
       expect(jeckle_api.connection.params).to eq 'hello' => 'world'
+    end
+
+    it 'assigns timeout options' do
+      expect(jeckle_api.connection.options.open_timeout).to eq 2
+      expect(jeckle_api.connection.options.timeout).to eq 5
     end
 
     context 'when middlewares_block is set' do
@@ -134,6 +141,39 @@ RSpec.describe Jeckle::API do
         expect {
           jeckle_api.middlewares
         }.to raise_error Jeckle::ArgumentError, /A block is required when configuring API middlewares/
+      end
+    end
+  end
+
+  describe '#timeout' do
+    let(:timeout) { nil }
+    let(:open_timeout) { nil }
+
+    before do
+      jeckle_api.open_timeout = open_timeout
+      jeckle_api.read_timeout = timeout
+    end
+
+    context 'when no timeout is defined' do
+      it 'returns empty hash' do
+        expect(jeckle_api.timeout).to eq({})
+      end
+    end
+
+    context 'when a read_timeout is defined' do
+      let(:timeout) { 5 }
+
+      it 'returns a hash with assgned option' do
+        expect(jeckle_api.timeout).to eq timeout: timeout
+      end
+    end
+
+    context 'when two timeouts are defined for both open and read' do
+      let(:timeout) { 5 }
+      let(:open_timeout) { 2 }
+
+      it 'returns a hash correctly assigned open and read timeouts' do
+        expect(jeckle_api.timeout).to eq open_timeout: open_timeout, timeout: timeout
       end
     end
   end
