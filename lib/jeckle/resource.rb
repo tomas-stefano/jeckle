@@ -36,9 +36,10 @@ module Jeckle
       end
 
       def search(params = {})
-        collection = run_request(resource_name, params).response.body || []
+        response   = run_request(resource_name, params).response.body || []
+        collection = response.kind_of?(Array) ? response : response[resource_name]
 
-        collection.collect { |attrs| new attrs }
+        Array(collection).collect { |attrs| new attrs }
       end
 
       def run_request(endpoint, options = {})
