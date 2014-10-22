@@ -60,6 +60,13 @@ module Jeckle
         raise Jeckle::NoSuchAPIError, registered_api_name
       end
 
+      # @deprecated Please use {#api} instead
+      #
+      def default_api(registered_api_name)
+        warn "[DEPRECATION] `default_api` is deprecated.  Please use `api` instead."
+        api(registered_api_name)
+      end
+
       def api_mapping
         @api_mapping ||= {}
       end
