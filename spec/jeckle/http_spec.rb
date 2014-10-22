@@ -34,7 +34,7 @@ RSpec.describe Jeckle::HTTP do
 
       context 'when api_mapping is changed' do
         it "does not affect the parent" do
-          inherited_class.default_api :another_api
+          inherited_class.api :another_api
 
           expect(FakeResource.api_mapping).not_to eq inherited_class.api_mapping
           expect(FakeResource.api_mapping[:default_api]).to eq Jeckle::Setup.registered_apis[:my_super_api]
@@ -46,7 +46,7 @@ RSpec.describe Jeckle::HTTP do
   describe '.default_api' do
     context 'when defining a registered API via Jeckle::Setup' do
       it 'returns the assigned API' do
-        expect(FakeResource.default_api :my_super_api).to be_kind_of Jeckle::API
+        expect(FakeResource.api :my_super_api).to be_kind_of Jeckle::API
       end
 
       it 'assigns API do api_mapping' do
@@ -56,7 +56,7 @@ RSpec.describe Jeckle::HTTP do
 
     context 'when defining an inexistent API' do
       it 'raises NoSuchAPIError' do
-        expect { FakeResource.default_api :unknown_api }.to raise_error Jeckle::NoSuchAPIError
+        expect { FakeResource.api :unknown_api }.to raise_error Jeckle::NoSuchAPIError
       end
     end
   end

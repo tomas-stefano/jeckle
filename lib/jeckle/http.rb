@@ -51,13 +51,20 @@ module Jeckle
       #
       #   class Shot
       #     include Jeckle::Resource
-      #     default_api :dribbble
+      #     api :dribbble
       #   end
       #
-      def default_api(registered_api_name)
+      def api(registered_api_name)
         api_mapping[:default_api] = Jeckle::Setup.registered_apis.fetch(registered_api_name)
       rescue KeyError => e
         raise Jeckle::NoSuchAPIError, registered_api_name
+      end
+
+      # @deprecated Please use {#api} instead
+      #
+      def default_api(registered_api_name)
+        warn "[DEPRECATION] `default_api` is deprecated.  Please use `api` instead."
+        api(registered_api_name)
       end
 
       def api_mapping

@@ -56,7 +56,7 @@ module SomeService
     class MyResource
       include Jeckle::Resource
 
-      default_api :some_service
+      api :some_service
 
       attribute :id
     end

@@ -9,7 +9,7 @@ end
 class Shot
   include Jeckle::Resource
 
-  default_api :dribbble
+  api :dribbble
 
   attribute :id, Integer
   attribute :name, String
