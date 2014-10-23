@@ -11,6 +11,8 @@ module Jeckle
         end
       end
 
+      # @public
+      #
       # The name of the resource that Jeckle uses to make the request
       #
       # @example
@@ -72,7 +74,13 @@ module Jeckle
       end
 
       def run_request(endpoint, options = {})
-        Jeckle::Request.run api_mapping[:default_api], endpoint, options
+        response = Jeckle::Request.run api_mapping[:default_api], endpoint, options
+
+        if logger = api_mapping[:default_api].logger
+          logger.debug("#{self} Response: #{response}")
+        end
+
+        response
       end
     end
   end
