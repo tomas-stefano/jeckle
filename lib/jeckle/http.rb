@@ -11,6 +11,8 @@ module Jeckle
         end
       end
 
+      # @public
+      #
       # The name of the resource that Jeckle uses to make the request
       #
       # @example
@@ -37,6 +39,23 @@ module Jeckle
       #
       def resource_name
         @resource_name ||= model_name.element.pluralize
+      end
+
+      # @public
+      #
+      # Overwritten the resource name without write the resource name method.
+      #
+      # @example
+      #
+      #   module OtherApi
+      #     class Project
+      #       include Jeckle::Resource
+      #       resource 'projects.json'
+      #     end
+      #   end
+      #
+      def resource(jeckle_resource_name)
+        @resource_name = jeckle_resource_name
       end
 
       # The API name that Jeckle uses to find all the api settings like domain, headers, etc.
@@ -72,7 +91,13 @@ module Jeckle
       end
 
       def run_request(endpoint, options = {})
-        Jeckle::Request.run api_mapping[:default_api], endpoint, options
+        response = Jeckle::Request.run api_mapping[:default_api], endpoint, options
+
+        if logger = api_mapping[:default_api].logger
+          logger.debug("#{self} Response: #{response}")
+        end
+
+        response
       end
     end
   end
