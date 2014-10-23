@@ -45,8 +45,8 @@ module Jeckle
       #     Post.find(1) # => posts/1
       #
       def find(id)
-        endpoint = "#{resource_name}/#{id}"
-        response = run_request(endpoint).response.body
+        endpoint   = "#{resource_name}/#{id}"
+        response   = run_request(endpoint).response.body
         attributes = parse_response(response, member_root_name)
 
         new(attributes)
@@ -62,10 +62,11 @@ module Jeckle
       #     Post.where({ status: 'published' }) # => posts/?status=published
       #
       def search(params = {})
-        response = run_request(resource_name, params).response.body || []
-        collection = parse_response(response, collection_root_name)
+        request    = run_request(resource_name, params)
+        response   = request.response
+        collection = parse_response(response.body, collection_root_name)
 
-        Array(collection).map { |attributes| new(attributes) }
+        CollectionResponse.new(collection, context: self, response: response)
       end
       alias :where :search
 

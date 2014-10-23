@@ -2,7 +2,8 @@ require 'spec_helper'
 
 RSpec.describe Jeckle::RESTActions do
   let(:api) { FakeResource.api_mapping[:default_api] }
-  let(:fake_request) { OpenStruct.new response: OpenStruct.new(body: body) }
+  let(:response) { OpenStruct.new(body: body) }
+  let(:fake_request) { OpenStruct.new response: response }
 
   describe '.root' do
     context 'when collection is true' do
@@ -78,7 +79,7 @@ RSpec.describe Jeckle::RESTActions do
         Post.find(1001)
       end
 
-      it 'returns an instance of resource' do
+      it 'returns an instance of resource keeping the response' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
         expect(post).to be_an_instance_of(Post)
@@ -102,11 +103,14 @@ RSpec.describe Jeckle::RESTActions do
 
       it 'returns an Array of resources' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
+        fake_resources = FakeResource.search(query)
 
-        expect(FakeResource.search query).to match [
-          an_instance_of(FakeResource),
-          an_instance_of(FakeResource)
+        expect(fake_resources).to match [
+          FakeResource.new(id: 1001),
+          FakeResource.new(id: 1002)
         ]
+
+        expect(fake_resources.response).to be(response)
       end
     end
 
@@ -123,6 +127,7 @@ RSpec.describe Jeckle::RESTActions do
           Post.new(id: 1001),
           Post.new(id: 1002)
         ]
+        expect(results.response).to be(response)
       end
     end
 
@@ -131,8 +136,10 @@ RSpec.describe Jeckle::RESTActions do
 
       it 'returns an empty Array' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
+        results = FakeResource.search(query)
 
-        expect(FakeResource.search query).to match []
+        expect(results).to match []
+        expect(results.response).to be(response)
       end
     end
   end
