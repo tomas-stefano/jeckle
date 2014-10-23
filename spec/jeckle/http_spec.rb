@@ -2,8 +2,16 @@ require 'spec_helper'
 
 RSpec.describe Jeckle::HTTP do
   describe '.resource_name' do
-    it 'returns resource name based on class name' do
-      expect(FakeResource.resource_name).to eq 'fake_resources'
+    context 'when resource is not namespaced' do
+      it 'returns resource name based on class name' do
+        expect(FakeResource.resource_name).to eq 'fake_resources'
+      end
+    end
+
+    context 'when resource is overwritten by .resource method' do
+      it 'returns resource name passed on the .resource method' do
+        expect(Shot.resource_name).to eq 'shots.json'
+      end
     end
 
     context 'when resource class is namespaced' do
