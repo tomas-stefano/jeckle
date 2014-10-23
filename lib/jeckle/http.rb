@@ -91,13 +91,13 @@ module Jeckle
       end
 
       def run_request(endpoint, options = {})
-        response = Jeckle::Request.run api_mapping[:default_api], endpoint, options
+        request = Jeckle::Request.run api_mapping[:default_api], endpoint, options
 
         if logger = api_mapping[:default_api].logger
-          logger.debug("#{self} Response: #{response}")
+          logger.debug("#{self} Response: #{request.response.body}")
         end
 
-        response
+        request
       end
     end
   end
