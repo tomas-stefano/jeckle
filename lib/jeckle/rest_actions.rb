@@ -7,8 +7,7 @@ module Jeckle
     module Collection
       # @public
       #
-      # The root name that Jeckle will parse in response. Default is <b>false</b>.
-      #
+      # The root name that Jeckle will parse the <b>response</b>. Default is <b>false</b>.
       #
       # @example
       #
@@ -19,13 +18,15 @@ module Jeckle
       #     end
       #   end
       #
-      #   Shot.root_name # => Will parse for 'shots'
+      #   Shot.collection_root_name # => Will parse the root node as 'shots'
+      #   Shot.member_root_name # => Will parse the root node as 'shot'
       #
-      #  Sometimes that are APIs are requested /projects, and the root node is extremely different from the resource name.
+      #  Sometimes that are APIs you need to fetch /projects, BUT the root node is extremely different from the resource name.
       #
       #   module OtherApi
       #     class Project
       #       include Jeckle::Resource
+      #       api :my_api
       #       root collection: 'awesome-projects', member: 'awesome-project'
       #     end
       #   end
