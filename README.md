@@ -37,6 +37,9 @@ First, we need to configure our API:
 Jeckle.configure do |config|
   config.register :dribbble do |api|
     api.base_uri = 'http://api.dribbble.com'
+    api.middlewares do
+      response :json
+    end
   end
 end
 
