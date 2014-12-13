@@ -64,6 +64,10 @@ module SomeService
 end
 ```
 
+## Examples
+
+You can see all examples [here:](https://github.com/tomas-stefano/jeckle/tree/master/examples)
+
 ## Roadmap
 
 - Faraday middleware abstraction
