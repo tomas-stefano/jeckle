@@ -64,6 +64,7 @@ end
 
 ```
 
+
 This allows us to run requests to search Dribbble.com Shots directory based on different attributes of the shot. For example, we can find a specific shot by providing its ID:
 
 ``` ruby
@@ -89,7 +90,9 @@ shot.image_url
 
 We're all set! Now we can expand the mapping of our API, e.g to add ability to search Dribbble Designer directory by adding Designer class, or we can expand the original mapping of Shot class to include more attributes, such as tags or comments.
 
+## Examples
 
+You can see all examples [here:](https://github.com/tomas-stefano/jeckle/tree/master/examples)
 
 ## Roadmap
 
