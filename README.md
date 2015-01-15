@@ -96,7 +96,4 @@ You can see all examples [here:](https://github.com/tomas-stefano/jeckle/tree/ma
 
 ## Roadmap
 
-- Faraday middleware abstraction
-- Per action API
-- Comprehensive restful actions
-- Testability
+Follow [Github's milestones](https://github.com/tomas-stefano/jeckle/milestones)
