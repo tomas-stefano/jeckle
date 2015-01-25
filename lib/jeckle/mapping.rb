@@ -13,20 +13,17 @@ module Jeckle
     end
 
     class AttributeMapping
-      def initialize(resource)
-        @resource = resource
+      def initialize(resource_class)
+        @resource_class = resource_class
       end
 
       def attribute(resource_attribute, api_attribute)
         raise Jeckle::InvalidAttributeMappingError,
-          { class_name: @resource.name, resource_attribute: resource_attribute,
+          { class_name: @resource_class.name, resource_attribute: resource_attribute,
             api_attribute: api_attribute
-        } unless @resource.attribute_set.map(&:name).include? resource_attribute
+        } unless @resource_class.attribute_set.map(&:name).include? resource_attribute
 
-        @resource.class_eval do
-          alias_method api_attribute, resource_attribute
-          alias_method "#{api_attribute}=", "#{resource_attribute}="
-        end
+        @resource_class.send(:alias_attribute, api_attribute, resource_attribute)
       end
     end
   end
