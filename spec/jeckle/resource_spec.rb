@@ -1,15 +1,5 @@
 require 'spec_helper'
 
-class CustomAttributeMappingResource
-  include Jeckle::Resource
-
-  attribute :first_name, String
-
-  mapping do
-    attribute :first_name, :FirstName
-  end
-end
-
 RSpec.describe Jeckle::Resource do
   subject(:fake_resource) { FakeResource.new }
 
@@ -29,10 +19,7 @@ RSpec.describe Jeckle::Resource do
     expect(FakeResource.ancestors).to include Jeckle::RESTActions
   end
 
-  describe 'custom attribute key mapping' do
-    it 'initializes attributes by key options' do
-      resource = CustomAttributeMappingResource.new(FirstName: 'First Name')
-      expect(resource.first_name).to eq('First Name')
-    end
+  it 'includes jeckle custom attribute mapping actions' do
+    expect(FakeResource.ancestors).to include Jeckle::CustomAttributeMapping
   end
 end

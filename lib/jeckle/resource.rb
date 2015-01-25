@@ -7,7 +7,7 @@ module Jeckle
       base.send :include, Jeckle::HTTP
       base.send :include, Jeckle::RESTActions
 
-      base.send :extend, Jeckle::Mapping
+      base.send :include, Jeckle::CustomAttributeMapping
     end
   end
 end
