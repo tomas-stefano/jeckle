@@ -8,7 +8,7 @@ module Jeckle
       def mapping(&block)
         @mapping ||= AttributeMapping.new(self)
 
-        @mapping.instance_eval(&block) if block.present?
+        @mapping.instance_eval(&block) if block_given?
       end
     end
 
