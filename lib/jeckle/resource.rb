@@ -6,6 +6,8 @@ module Jeckle
       base.send :include, Jeckle::Model
       base.send :include, Jeckle::HTTP
       base.send :include, Jeckle::RESTActions
+
+      base.send :include, Jeckle::CustomAttributeMapping
     end
   end
 end

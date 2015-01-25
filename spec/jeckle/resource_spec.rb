@@ -18,4 +18,8 @@ RSpec.describe Jeckle::Resource do
   it 'includes jeckle rest actions' do
     expect(FakeResource.ancestors).to include Jeckle::RESTActions
   end
+
+  it 'includes jeckle custom attribute mapping actions' do
+    expect(FakeResource.ancestors).to include Jeckle::CustomAttributeMapping
+  end
 end
