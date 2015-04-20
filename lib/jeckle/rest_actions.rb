@@ -62,11 +62,14 @@ module Jeckle
       #     Post.where({ status: 'published' }) # => posts/?status=published
       #
       def search(params = {})
-        request    = run_request(resource_name, params)
-        response   = request.response
+        request = run_request(resource_name, params)
+        response = request.response
+
+        return [] unless response.success?
+
         collection = parse_response(response.body, collection_root_name)
 
-        CollectionResponse.new(collection, context: self, response: response)
+        Array.wrap(collection).collect { |attrs| new attrs }
       end
       alias :where :search
 

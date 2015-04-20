@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Jeckle::RESTActions do
   let(:api) { FakeResource.api_mapping[:default_api] }
-  let(:response) { OpenStruct.new(body: body) }
+  let(:response) { OpenStruct.new(body: body, success?: true) }
   let(:fake_request) { OpenStruct.new response: response }
 
   describe '.root' do
@@ -12,13 +12,13 @@ RSpec.describe Jeckle::RESTActions do
       end
     end
 
-    context 'when collection is false' do
+    context 'when collection is not defined' do
       it 'collection root name should be nil' do
         expect(FakeResource.collection_root_name).to be nil
       end
     end
 
-    context 'when member is true' do
+    context 'when member option is true' do
       it 'member root name should be in singular' do
         expect(Post.member_root_name).to eq('post')
         expect(CommentLegacy.member_root_name).to eq('comment_legacy')
@@ -66,9 +66,7 @@ RSpec.describe Jeckle::RESTActions do
     end
 
     context 'when have root node in response' do
-      let(:body) do
-        { 'post' => { 'id' => 1001 } }
-      end
+      let(:body) { { 'post' => { 'id' => 1001 } } }
 
       let(:post) { Post.find 1001 }
 
@@ -109,15 +107,11 @@ RSpec.describe Jeckle::RESTActions do
           FakeResource.new(id: 1001),
           FakeResource.new(id: 1002)
         ]
-
-        expect(fake_resources.response).to be(response)
       end
     end
 
     context 'when there are results WITH collection root node' do
-      let(:body) do
-        { 'posts' => [{ id: 1001 }, { id: 1002 } ] }
-      end
+      let(:body) { { 'posts' => [{ id: 1001 }, { id: 1002 }], success?: true } }
 
       it 'returns an Array of resources' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
@@ -127,7 +121,6 @@ RSpec.describe Jeckle::RESTActions do
           Post.new(id: 1001),
           Post.new(id: 1002)
         ]
-        expect(results.response).to be(response)
       end
     end
 
@@ -139,7 +132,6 @@ RSpec.describe Jeckle::RESTActions do
         results = FakeResource.search(query)
 
         expect(results).to match []
-        expect(results.response).to be(response)
       end
     end
   end

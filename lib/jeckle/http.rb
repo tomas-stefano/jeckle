@@ -83,6 +83,7 @@ module Jeckle
       #
       def default_api(registered_api_name)
         warn "[DEPRECATION] `default_api` is deprecated.  Please use `api` instead."
+
         api(registered_api_name)
       end
 
@@ -91,13 +92,11 @@ module Jeckle
       end
 
       def run_request(endpoint, options = {})
-        request = Jeckle::Request.run api_mapping[:default_api], endpoint, options
-
-        if logger = api_mapping[:default_api].logger
-          logger.debug("#{self} Response: #{request.response.body}")
+        Jeckle::Request.run(api_mapping[:default_api], endpoint, options).tap do |request|
+          if logger = api_mapping[:default_api].logger
+            logger.debug("#{self} Response: #{request.response.body}")
+          end
         end
-
-        request
       end
     end
   end
