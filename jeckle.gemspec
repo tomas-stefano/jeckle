@@ -21,11 +21,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activemodel', '>= 4.0'
   spec.add_dependency 'faraday', '~> 0.9'
   spec.add_dependency 'faraday_middleware'
-  spec.add_dependency 'virtus', '~> 1.0'
+  spec.add_dependency 'virtus'
 
-  spec.add_development_dependency 'bundler', '~> 1.6'
+  spec.add_development_dependency 'bundler', '~> 1.9'
   spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rspec', '~> 3.1'
+  spec.add_development_dependency 'rspec', '~> 3.2'
 
   if RUBY_ENGINE == 'rbx'
     spec.add_development_dependency 'rubinius-compiler'
@@ -34,6 +34,6 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency 'pry'
   else
     spec.add_development_dependency 'pry-nav' if RUBY_VERSION < '2.0.0'
-    spec.add_development_dependency 'pry-byebug' if RUBY_VERSION >= '2.0.0'
+    spec.add_development_dependency 'pry-byebug', '3.1.0' if RUBY_VERSION >= '2.0.0'
   end
 end
