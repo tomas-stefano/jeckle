@@ -1,29 +1,12 @@
 module Jeckle
   module CustomAttributeMapping
-    def self.included(base)
-      base.send :extend, Jeckle::CustomAttributeMapping::Methods
-    end
+    def attribute(name, coercion, options = {})
+      if custom_name = options.delete(:as)
+        super(custom_name, coercion, options)
 
-    module Methods
-      def mapping(&block)
-        @mapping ||= AttributeMapping.new(self)
-
-        @mapping.instance_eval(&block) if block_given?
-      end
-    end
-
-    class AttributeMapping
-      def initialize(resource_class)
-        @resource_class = resource_class
-      end
-
-      def attribute(resource_attribute, api_attribute)
-        raise Jeckle::InvalidAttributeMappingError,
-          { class_name: @resource_class.name, resource_attribute: resource_attribute,
-            api_attribute: api_attribute
-        } unless @resource_class.attribute_set.map(&:name).include? resource_attribute
-
-        @resource_class.send(:alias_attribute, api_attribute, resource_attribute)
+        alias_attribute name, custom_name
+      else
+        super
       end
     end
   end
