@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Jeckle::RESTActions do
+RSpec.describe Jeckle::Resource::RESTfulActions do
   let(:api) { FakeResource.api_mapping[:default_api] }
   let(:response) { OpenStruct.new(body: body, success?: true) }
   let(:fake_request) { OpenStruct.new response: response }

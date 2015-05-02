@@ -15,7 +15,7 @@ RSpec.describe Jeckle::Resource do
     expect(FakeResource.ancestors).to include Jeckle::HTTP
   end
 
-  it 'includes jeckle rest actions' do
-    expect(FakeResource.ancestors).to include Jeckle::RESTActions
+  it 'includes jeckle restful actions' do
+    expect(FakeResource.ancestors).to include Jeckle::Resource::RESTfulActions
   end
 end
