@@ -1,5 +1,5 @@
 module Jeckle
-  module CustomAttributeMapping
+  module AttributeAliasing
     def attribute(name, coercion, options = {})
       if custom_name = options.delete(:as)
         super(custom_name, coercion, options)

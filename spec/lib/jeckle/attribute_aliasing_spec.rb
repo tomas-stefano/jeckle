@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-class CustomAttributeMappingResource
+class AttributeAliasingResource
   include Jeckle::Resource
 
   attribute :firstName, String, as: :first_name
 end
 
-RSpec.describe Jeckle::CustomAttributeMapping do
+RSpec.describe Jeckle::AttributeAliasing do
   let(:first_name) { 'First Name' }
-  let(:resource) { CustomAttributeMappingResource.new(firstName: first_name) }
+  let(:resource) { AttributeAliasingResource.new(firstName: first_name) }
 
   describe '.attribute' do
     it 'initializes attributes by :as options' do
