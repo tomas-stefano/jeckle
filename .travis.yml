@@ -9,6 +9,5 @@ rvm:
   - jruby
   - 2.1.0
   - 2.0.0
-  - 1.9.3
 env:
   - CODECLIMATE_REPO_TOKEN=71bc27cbd607a9f50ee1d314ad3f74e7d670e42afe3e01d99d7bc1cd6b65524b
