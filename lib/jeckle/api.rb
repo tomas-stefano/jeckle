@@ -51,5 +51,9 @@ module Jeckle
         t[:timeout] = @read_timeout if @read_timeout
       end
     end
+
+    def logger
+      @logger ||= Logger.new(STDOUT)
+    end
   end
 end
