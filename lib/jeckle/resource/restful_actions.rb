@@ -1,11 +1,16 @@
+require_relative 'restful_actions/index'
+require_relative 'restful_actions/show'
+
 module Jeckle
   module Resource
     module RESTfulActions
       def self.included(base)
-        base.send :extend, Jeckle::Resource::RESTfulActions::Collection
+        base.send :extend, ClassMethods
+        base.send :include, Jeckle::Resource::RESTfulActions::Index
+        base.send :include, Jeckle::Resource::RESTfulActions::Show
       end
 
-      module Collection
+      module ClassMethods
         # @public
         #
         # The root name that Jeckle will parse the <b>response</b>. Default is <b>false</b>.
@@ -35,42 +40,6 @@ module Jeckle
         def root(options={})
           @collection_root_name = find_root_name(options[:collection], :pluralize)
           @member_root_name     = find_root_name(options[:member], :singularize)
-        end
-
-        # @public
-        #
-        # Member action that requests for the resource using the resource name
-        #
-        #  @example
-        #
-        #     Post.find(1) # => posts/1
-        #
-        def find(id)
-          endpoint   = "#{resource_name}/#{id}"
-          response   = run_request(endpoint).response.body
-          attributes = parse_response(response, member_root_name)
-
-          new(attributes)
-        end
-
-        # @public
-        #
-        # Collection action that requests for the resource using the resource name
-        #
-        #  @example
-        #
-        #     Post.search({ status: 'published' }) # => posts/?status=published
-        #     Post.where({ status: 'published' }) # => posts/?status=published
-        #
-        def search(params = {})
-          request = run_request(resource_name, params)
-          response = request.response
-
-          return [] unless response.success?
-
-          collection = parse_response(response.body, collection_root_name)
-
-          Array.wrap(collection).collect { |attrs| new attrs }
         end
 
         # @private
