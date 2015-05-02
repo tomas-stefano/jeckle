@@ -71,7 +71,6 @@ module Jeckle
 
         Array.wrap(collection).collect { |attrs| new attrs }
       end
-      alias :where :search
 
       # @private
       #

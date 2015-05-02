@@ -115,7 +115,7 @@ RSpec.describe Jeckle::RESTActions do
 
       it 'returns an Array of resources' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
-        results = Post.where(query)
+        results = Post.search(query)
 
         expect(results).to match [
           Post.new(id: 1001),
