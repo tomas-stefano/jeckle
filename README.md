@@ -20,19 +20,25 @@ Let third party APIs be Heckle for your app's Jeckle.
 
 Add this line to your application's Gemfile:
 
-    gem 'jeckle'
+```ruby
+gem 'jeckle'
+```
 
 And then execute:
 
-    $ bundle
+```sh
+$ bundle
+```
 
-### For Rails applications
+## Usage
 
-We recommend to create a initializer:
+### Configuring an API
+
+Let's say you'd like to connect your app to Dribbble.com - a community of designers sharing screenshots of their work, process, and projects.
+
+First, you would need to configure the API:
 
 ```ruby
-# config/initializers/jeckle.rb
-
 Jeckle.configure do |config|
   config.register :some_service do |api|
     api.base_uri = 'http://api.someservice.com'
@@ -46,17 +52,13 @@ Jeckle.configure do |config|
 end
 ```
 
-And then put your API stuff scoped inside a `services` folder:
+### Mapping resources
+
+Following the previous example, Dribbble.com consists of pieces of web designers work called "Shots". Each shot has the attributes `id`, `name`, `url` and `image_url`. A Jeckle resource representing Dribbble's shots would be something like this:
 
 ```ruby
-# app/services/some_service/models/my_resource.rb
-
-module SomeService
-  module Models
-    class MyResource
-      include Jeckle::Resource
-
-      api :some_service
+class Shot
+  include Jeckle::Resource
 
       attribute :id
     end
@@ -64,9 +66,60 @@ module SomeService
 end
 ```
 
+### Fetching data
+
+The resource class allows us to search shots through HTTP requests to the API, based on the provided information. For example, we can find a specific shot by providing its id to the `find` method:
+
+```ruby
+# GET http://api.dribbble.com/shots/1600459
+shot = Shot.find 1600459
+```
+
+That will return a `Shot` instance, containing the shot info:
+
+```ruby
+shot.id
+=> 1600459
+
+shot.name
+=> "Daryl Heckle And Jeckle Oates"
+
+shot.image_url
+=> "https://d13yacurqjgara.cloudfront.net/users/85699/screenshots/1600459/daryl_heckle_and_jeckle_oates-dribble.jpg"
+```
+
+You can also look for many shots matching one or more attributes, by using the `search` method:
+
+```ruby
+# GET http://api.dribbble.com/shots?name=avengers
+shots = Shot.search name: 'avengers'
+```
+
+### Attribute Aliasing
+
+Sometimes you want to call the API's attributes something else, either because their names aren't very concise or because they're out of you app's convention. If that's the case, you can add an `as` option:
+
+```ruby
+attribute :thumbnailSize, String, as: :thumbnail_size
+```
+
+Both mapping will work:
+
+```ruby
+shot.thumbnailSize
+=> "50x50"
+
+shot.thumbnail_size
+=> "50x50"
+```
+
+We're all set! Now we can expand the mapping of our API, e.g to add ability to search Dribbble Designer directory by adding Designer class, or we can expand the original mapping of Shot class to include more attributes, such as tags or comments.
+
+## Examples
+
+You can see more examples here: [https://github.com/tomas-stefano/jeckle/tree/master/examples](https://github.com/tomas-stefano/jeckle/tree/master/examples)
+
 ## Roadmap
 
-- Faraday middleware abstraction
-- Per action API
-- Comprehensive restful actions
-- Testability
+Follow [GitHub's milestones](https://github.com/tomas-stefano/jeckle/milestones)
+>>>>>>> 14eb4ce... Merge pull request #49 from tomas-stefano/attribute-mapping
