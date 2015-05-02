@@ -93,10 +93,14 @@ module Jeckle
 
       def run_request(endpoint, options = {})
         Jeckle::Request.run(api_mapping[:default_api], endpoint, options).tap do |request|
-          if logger = api_mapping[:default_api].logger
-            logger.debug("#{self} Response: #{request.response.body}")
-          end
+          logger.debug("#{self} Response: #{request.response.body}")
         end
+      end
+
+      private
+
+      def logger
+        @logger ||= api_mapping[:default_api].logger
       end
     end
   end
