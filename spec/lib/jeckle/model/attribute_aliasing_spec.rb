@@ -6,7 +6,7 @@ class AttributeAliasingResource
   attribute :firstName, String, as: :first_name
 end
 
-RSpec.describe Jeckle::AttributeAliasing do
+RSpec.describe Jeckle::Model::AttributeAliasing do
   let(:first_name) { 'First Name' }
   let(:resource) { AttributeAliasingResource.new(firstName: first_name) }
 
