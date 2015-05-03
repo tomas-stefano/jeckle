@@ -1,6 +1,6 @@
 module Jeckle
   class Setup
-    # Register apis, providing all the configurations to it.
+    # Register APIs, providing all the configurations to it.
     #
     # @example
     #

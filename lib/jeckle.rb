@@ -6,7 +6,7 @@ require 'active_support/core_ext/array/wrap'
 
 require 'jeckle/version'
 
-%w(setup api model request http errors resource).each do |file_name|
+%w(setup api model request http errors resource attribute_aliasing).each do |file_name|
   require "jeckle/#{file_name}"
 end
 

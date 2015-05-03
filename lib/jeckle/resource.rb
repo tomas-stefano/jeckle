@@ -8,6 +8,7 @@ module Jeckle
       base.send :include, Jeckle::Model
       base.send :include, Jeckle::HTTP
       base.send :include, Jeckle::Resource::RESTfulActions
+      base.send :extend, Jeckle::AttributeAliasing
     end
   end
 end
