@@ -1,3 +1,5 @@
+require_relative 'resource/action_dsl'
+
 module Jeckle
   module Resource
     def self.included(base)
@@ -6,7 +8,7 @@ module Jeckle
       base.send :include, Jeckle::Model
       base.send :include, Jeckle::HTTP
       base.send :include, Jeckle::RESTActions
-
+      base.send :extend, Jeckle::Resource::ActionDSL
       base.send :extend, Jeckle::AttributeAliasing
     end
   end
