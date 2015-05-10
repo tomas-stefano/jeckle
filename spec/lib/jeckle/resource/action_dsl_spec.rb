@@ -103,5 +103,37 @@ RSpec.describe Jeckle::Resource::ActionDSL do
         end
       end
     end
+
+    context 'when `on` is member' do
+      let(:action_name) { :erase }
+      let(:path) { nil }
+      let(:default_endpoint) { "#{resource_name}/#{resource.id}/#{action_name}" }
+
+      let(:resource) { resource_class.new resource_attrs }
+      let(:resource_attrs) { { id: 9821, url: 'http://img.co/9821.png' } }
+
+      before { resource_class.action action_name, on: :member, path: path }
+
+      it 'defines an instance method for the action' do
+        expect(resource).to respond_to action_name
+      end
+
+      describe 'defined instance method' do
+        let(:request) { double(response: response).as_null_object }
+
+        let(:response) { double(body: response_body, success?: response_successful).as_null_object }
+        let(:response_body) { { resource_name => resource_attrs } }
+        let(:response_successful) { true }
+
+        before { allow(Jeckle::Request).to receive(:run).and_return request }
+
+        it "runs request to resource's API" do
+          expect(Jeckle::Request).to receive(:run).with(api, default_endpoint, resource_attrs).
+            and_return request
+
+          resource.erase
+        end
+      end
+    end
   end
 end

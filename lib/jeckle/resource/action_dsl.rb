@@ -22,7 +22,13 @@ module Jeckle
             Array(collection).collect { |attrs| new attrs }
           end
         when :member
-          # TODO
+          define_method action_name do |params = {}|
+            params = attributes.merge(params)
+            options[:key] ||= :id
+            options[:key] = send(options[:key])
+
+            self.attributes = self.class.run_member_request action_name, params, options
+          end
         else
           raise Jeckle::ArgumentError, %(Invalid value for :on option.
             Expected: member|collection
@@ -38,6 +44,17 @@ module Jeckle
         response = request.response
 
         return [] unless response.success?
+
+        parse_response response.body
+      end
+
+      def run_member_request(action_name, params = {}, options = {})
+        path = options.delete(:path) || action_name
+        key = options.delete(:key)
+
+        endpoint = "#{resource_name}/#{key}/#{path}"
+        request = run_request endpoint, options.merge(params)
+        response = request.response
 
         parse_response response.body
       end
