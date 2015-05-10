@@ -56,6 +56,20 @@ RSpec.describe Jeckle::Request do
       end
     end
 
+    context 'PATCH' do
+      let(:endpoint) { 'fake_resources' }
+      let(:options) { { body: { id: 1001, value: 1000 }, method: http_method } }
+      let(:http_method) { :patch }
+
+      it_behaves_like Jeckle::Request
+
+      it 'calls PATCH request on API\'s connection' do
+        expect(api.connection).to receive(:patch).and_call_original
+
+        described_class.run api, endpoint, options
+      end
+    end
+
     context 'DELETE' do
       let(:options) { { method: http_method } }
       let(:endpoint) { 'fake_resource/4' }

@@ -6,7 +6,7 @@ module Jeckle
       @api = api
 
       @method  = options.delete(:method) || :get
-      @body    = options.delete(:body) if %w(post put).include?(method.to_s)
+      @body    = options.delete(:body) if %w(post put patch).include?(method.to_s)
       @headers = options.delete(:headers)
 
       @endpoint = endpoint

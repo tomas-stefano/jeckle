@@ -1,5 +1,6 @@
 ## v.0.4.0
 
+* Added support for PATCH method on Jeckle::Request
 * Added definition of attribute aliases. Example: `attribute :firstName, String, as: :first_name`
 
 ## v.0.3.0
