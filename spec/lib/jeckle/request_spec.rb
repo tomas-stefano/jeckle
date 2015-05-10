@@ -70,4 +70,12 @@ RSpec.describe Jeckle::Request do
       end
     end
   end
+
+  describe '.new' do
+    it 'raises private method error' do
+      expect{
+        described_class.new
+      }.to raise_error NoMethodError, /.*private method `new'.*/
+    end
+  end
 end

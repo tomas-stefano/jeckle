@@ -19,6 +19,8 @@ module Jeckle
       new *args
     end
 
+    private_class_method :new
+
     private
 
     def perform_api_request
