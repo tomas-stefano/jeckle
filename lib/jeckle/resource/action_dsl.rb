@@ -16,7 +16,11 @@ module Jeckle
 
         case act_on
         when :collection
-          define_collection_action(action_name, options)
+          define_singleton_method action_name do |params = {}|
+            collection = run_collection_request(action_name, params, options)
+
+            Array(collection).collect { |attrs| new attrs }
+          end
         when :member
           # TODO
         else
@@ -26,26 +30,20 @@ module Jeckle
         end
       end
 
-      private
-
-      def define_collection_action(action_name, options)
+      def run_collection_request(action_name, params = {}, options = {})
         path = options.delete(:path) || action_name
 
-        define_singleton_method(action_name) do |params|
-          url = "#{resource_name}/#{path}"
-          request = run_request(url, params.merge(options))
-          response = request.response
+        endpoint = "#{resource_name}/#{path}"
+        request = run_request endpoint, options.merge(params)
+        response = request.response
 
-          return [] unless response.success?
+        return [] unless response.success?
 
-          collection = parse_response(response.body)
-
-          Array(collection).collect { |attrs| new attrs }
-        end
+        parse_response response.body
       end
 
-      def parse_response(response)
-        response.kind_of?(Array) ? response : response[resource_name]
+      def parse_response(body)
+        body.kind_of?(Array) ? body : body[resource_name]
       end
     end
   end
