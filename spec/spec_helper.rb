@@ -4,6 +4,7 @@ if ENV['CODECLIMATE_REPO_TOKEN']
 end
 
 require 'bundler/setup'
+require 'pry'
 require 'jeckle'
 
 Dir['spec/support/**/*.rb'].each { |file| require File.expand_path(file) }
