@@ -21,7 +21,15 @@ RSpec.describe Jeckle::Resource::ActionDSL do
   let(:api) { resource_class.api_mapping[:default_api] }
 
   describe '.action' do
-    context 'on collection' do
+    context 'when `on` is invalid' do
+      it 'raises Jeckle::ArgumentError' do
+        expect {
+          resource_class.action :hat, on: :your_head
+        }.to raise_error Jeckle::ArgumentError, /Invalid value for \:on/
+      end
+    end
+
+    context 'when `on` is collection' do
       let(:action_name) { :last_month }
       let(:path) { nil }
       let(:default_endpoint) { "#{resource_name}/#{action_name}" }

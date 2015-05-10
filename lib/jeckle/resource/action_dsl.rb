@@ -26,7 +26,7 @@ module Jeckle
         else
           raise Jeckle::ArgumentError, %(Invalid value for :on option.
             Expected: member|collection
-            Got: #{on})
+            Got: #{act_on})
         end
       end
 
