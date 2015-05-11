@@ -1,3 +1,7 @@
+## v.0.4.0
+
+* Added definition of attribute aliases. Example: `attribute :firstName, String, as: :first_name`
+
 ## v.0.3.0
 
 * Change Jeckle::Resource.default_api to Jeckle::Resource.api
