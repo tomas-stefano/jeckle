@@ -6,11 +6,22 @@ module Jeckle
       @api = api
 
       @method  = options.delete(:method) || :get
-      @body    = options.delete(:body) if %w(post put).include?(method.to_s)
+      @body    = options.delete(:body) if %w(post put patch).include?(method.to_s)
       @headers = options.delete(:headers)
 
+      if options[:params].nil? && options.size > 0
+        warn %([DEPRECATION] Sending URL params mixed with options hash is deprecated.
+        Instead of doing this:
+          run_request 'cars/search', id: id, method: :get
+        Do this:
+          run_request 'cars/search', params: { id: id }, method: :get)
+
+        @params = options
+      else
+        @params = options.delete(:params) || {}
+      end
+
       @endpoint = endpoint
-      @params = options
 
       @response = perform_api_request
     end
