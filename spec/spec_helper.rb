@@ -4,7 +4,7 @@ if ENV['CODECLIMATE_REPO_TOKEN']
 end
 
 require 'bundler/setup'
-require 'pry'
+require 'pry' unless RUBY_ENGINE == 'rbx'
 require 'jeckle'
 
 Dir['spec/support/**/*.rb'].each { |file| require File.expand_path(file) }

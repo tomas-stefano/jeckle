@@ -27,14 +27,17 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.2'
 
-  if RUBY_ENGINE == 'rbx'
+  case RUBY_ENGINE
+  when 'rbx'
     spec.add_development_dependency 'rubinius-compiler'
     spec.add_development_dependency 'rubinius-debugger'
-  elsif RUBY_ENGINE == 'jruby'
+  when 'jruby', 'ruby'
     spec.add_development_dependency 'pry'
-  elsif RUBY_VERSION < '2.0.0'
-    spec.add_development_dependency 'pry-nav'
-  else
-    spec.add_development_dependency 'pry-byebug', '3.1.0'
+
+    if RUBY_VERSION >= '2.0.0'
+      spec.add_development_dependency 'pry-byebug', '3.1.0'
+    else
+      spec.add_development_dependency 'pry-nav'
+    end
   end
 end
