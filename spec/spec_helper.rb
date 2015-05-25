@@ -1,11 +1,10 @@
+require 'bundler/setup'
+Bundler.require :default
+
 if ENV['CODECLIMATE_REPO_TOKEN']
   require 'codeclimate-test-reporter'
   CodeClimate::TestReporter.start
 end
-
-require 'bundler/setup'
-require 'pry' unless RUBY_ENGINE == 'rbx'
-require 'jeckle'
 
 Dir['spec/support/**/*.rb'].each { |file| require File.expand_path(file) }
 
