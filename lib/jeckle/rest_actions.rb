@@ -13,7 +13,9 @@ module Jeckle
       end
 
       def search(params = {})
-        response   = run_request(resource_name, params: params).response.body || []
+        custom_resource_name = params.delete(:resource_name) if params.kind_of?(Hash)
+
+        response   = run_request(custom_resource_name || resource_name, params: params).response.body || []
         collection = response.kind_of?(Array) ? response : response[resource_name]
 
         Array(collection).collect { |attrs| new attrs }
