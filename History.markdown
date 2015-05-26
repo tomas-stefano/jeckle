@@ -1,3 +1,8 @@
+## v.0.3.1
+
+* Add attribute aliasing
+* Add possibility to change the resource name when call Resource.search.
+
 ## v.0.3.0
 
 * Change Jeckle::Resource.default_api to Jeckle::Resource.api
