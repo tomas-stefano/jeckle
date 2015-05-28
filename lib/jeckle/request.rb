@@ -22,6 +22,7 @@ module Jeckle
       end
 
       @endpoint = endpoint
+
       @response = perform_api_request
     end
 
