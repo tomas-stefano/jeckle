@@ -33,7 +33,8 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency 'rubinius-debugger'
   when 'jruby', 'ruby'
     spec.add_development_dependency 'pry'
-
+    spec.add_development_dependency 'pry-nav'
+  when 'ruby'
     if RUBY_VERSION >= '2.0.0'
       spec.add_development_dependency 'pry-byebug', '3.1.0'
     else
