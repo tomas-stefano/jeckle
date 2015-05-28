@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   when 'rbx'
     spec.add_development_dependency 'rubinius-compiler'
     spec.add_development_dependency 'rubinius-debugger'
-  when 'jruby', 'ruby'
+  when 'jruby'
     spec.add_development_dependency 'pry'
     spec.add_development_dependency 'pry-nav'
   when 'ruby'
