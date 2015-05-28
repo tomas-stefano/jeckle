@@ -1,8 +1,8 @@
 module Jeckle
   module Model
     def self.included(base)
-      base.send :include, ActiveModel::Validations
-      base.send :include, Virtus.model
+      base.include ActiveModel::Validations
+      base.include Virtus.model
     end
   end
 end
