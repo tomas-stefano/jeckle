@@ -149,14 +149,18 @@ RSpec.describe Jeckle::API do
     let(:timeout) { nil }
     let(:open_timeout) { nil }
 
+    # Since we're changing manually jeckle_api configs we can mess with other specs, is better to
+    # dup and contain our modifications
+    let(:api) { jeckle_api.dup }
+
     before do
-      jeckle_api.open_timeout = open_timeout
-      jeckle_api.read_timeout = timeout
+      api.open_timeout = open_timeout
+      api.read_timeout = timeout
     end
 
     context 'when no timeout is defined' do
       it 'returns empty hash' do
-        expect(jeckle_api.timeout).to eq({})
+        expect(api.timeout).to eq({})
       end
     end
 
@@ -164,7 +168,7 @@ RSpec.describe Jeckle::API do
       let(:timeout) { 5 }
 
       it 'returns a hash with assgned option' do
-        expect(jeckle_api.timeout).to eq timeout: timeout
+        expect(api.timeout).to eq timeout: timeout
       end
     end
 
@@ -173,7 +177,7 @@ RSpec.describe Jeckle::API do
       let(:open_timeout) { 2 }
 
       it 'returns a hash correctly assigned open and read timeouts' do
-        expect(jeckle_api.timeout).to eq open_timeout: open_timeout, timeout: timeout
+        expect(api.timeout).to eq open_timeout: open_timeout, timeout: timeout
       end
     end
   end
