@@ -30,7 +30,7 @@ RSpec.describe Jeckle::RESTActions do
 
       it 'calls default API connection with GET and search params' do
         expect(Jeckle::Request).to receive(:run)
-          .with(api, 'fake_resources', query).and_return(fake_request)
+          .with(api, 'fake_resources', params: query).and_return(fake_request)
 
         FakeResource.search query
       end
@@ -67,6 +67,19 @@ RSpec.describe Jeckle::RESTActions do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
         expect(FakeResource.search query).to match []
+      end
+    end
+
+    context 'when the endpoint is overwritten' do
+      let(:endpoint) { 'custom_endpoint' }
+      let(:query) { { resource_name: endpoint, name: 'cocada' } }
+      let(:body) { [{ id: 1001 }, { id: 1002 }] }
+
+      it 'calls default API connection with GET and search params' do
+        expect(Jeckle::Request).to receive(:run)
+          .with(api, endpoint, params: query).and_return(fake_request)
+
+        FakeResource.search query
       end
     end
   end

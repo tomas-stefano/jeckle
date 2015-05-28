@@ -63,7 +63,7 @@ module Jeckle
       # @deprecated Please use {#api} instead
       #
       def default_api(registered_api_name)
-        warn "[DEPRECATION] `default_api` is deprecated.  Please use `api` instead."
+        warn "[DEPRECATION] `default_api` is deprecated. Please use `api` instead."
         api(registered_api_name)
       end
 
