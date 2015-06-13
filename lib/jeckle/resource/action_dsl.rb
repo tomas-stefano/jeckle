@@ -19,7 +19,7 @@ module Jeckle
           define_singleton_method action_name do |params = {}|
             collection = run_collection_request(action_name, params, options)
 
-            Array(collection).collect { |attrs| new attrs }
+            Array.wrap(collection).collect { |attrs| new attrs }
           end
         when :member
           define_method action_name do |params = {}|
