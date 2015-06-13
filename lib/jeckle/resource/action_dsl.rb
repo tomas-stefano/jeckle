@@ -24,8 +24,9 @@ module Jeckle
         when :member
           define_method action_name do |params = {}|
             params = attributes.merge(params)
+
             options[:key] ||= :id
-            options[:key] = send(options[:key])
+            options[:key] = public_send(options[:key])
 
             self.attributes = self.class.run_member_request action_name, params, options
           end
