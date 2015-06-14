@@ -12,33 +12,38 @@ module Jeckle
       #    - on     [member|collection]
       #    - path
       def action(action_name, options = {})
-        action_config = parse_action_config(options)
+        action_on = options.delete(:on) || :member
+        action_params = options.delete(:params) || {}
 
-        case action_config[:act_on]
+        case action_on
         when :collection
-          define_singleton_method action_name do
-            if action_config[:params].is_a? Proc
-              action_config[:params] = instance_exec(&action_config[:params])
+          define_singleton_method action_name do |params = {}|
+            if action_params.is_a? Proc
+              params.merge! instance_exec(&action_params)
+            else
+              params.merge!(action_params)
             end
 
-            collection = run_collection_request(action_name, action_config[:params], options)
+            collection = run_collection_request(action_name, params, options)
 
             Array.wrap(collection).collect { |attrs| new attrs }
           end
         when :member
-          define_method action_name do
-            if action_config[:params].is_a? Proc
-              action_config[:params] = instance_exec(&action_config[:params])
+          define_method action_name do |params = {}|
+            if action_params.is_a? Proc
+              params.merge! instance_exec(&action_params)
+            else
+              params.merge!(action_params)
             end
 
             options[:key] = public_send options.fetch(:key, :id)
 
-            self.attributes = self.class.run_member_request action_name, action_config[:params], options
+            self.attributes = self.class.run_member_request action_name, params, options
           end
         else
           raise Jeckle::ArgumentError, %(Invalid value for :on option.
             Expected: member|collection
-            Got: #{action_config[:act_on]})
+            Got: #{action_on})
         end
       end
 
@@ -66,13 +71,6 @@ module Jeckle
       end
 
       private
-
-      def parse_action_config(options)
-        {}.tap do |opts|
-          opts[:act_on] = options.delete(:on) || :member
-          opts[:params] = options.delete(:params) || {}
-        end
-      end
 
       def parse_response(body)
         body.kind_of?(Array) ? body : body[resource_name]

@@ -56,10 +56,10 @@ RSpec.describe Jeckle::Resource::ActionDSL do
           before { allow(Jeckle::Request).to receive(:run).and_return request }
 
           describe 'options' do
+            before { subject }
+
             context 'when path is present' do
               it 'runs request to given path' do
-                subject
-
                 expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
               end
             end
@@ -69,8 +69,6 @@ RSpec.describe Jeckle::Resource::ActionDSL do
                 let(:params) { { user: 'jane' } }
 
                 it 'runs request with given params' do
-                  subject
-
                   expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, params)
                 end
               end
@@ -79,18 +77,22 @@ RSpec.describe Jeckle::Resource::ActionDSL do
                 let(:params) { -> { { since: (2 + 2) } } }
 
                 it 'runs request with given params' do
-                  subject
-
                   expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, { since: 4 })
                 end
               end
             end
           end
 
-          it "runs request to resource's API" do
-            subject
+          context 'with params' do
+            let(:extra_params) { { foo: :bar } }
 
-            expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
+            subject { resource_class.send action_name, extra_params }
+
+            it "runs request to resource's API forwarding params" do
+              subject
+
+              expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, extra_params)
+            end
           end
 
           context 'when response is successful' do
@@ -170,10 +172,16 @@ RSpec.describe Jeckle::Resource::ActionDSL do
             end
           end
 
-          it "runs request to resource's API" do
-            subject
+          context 'with params' do
+            let(:extra_params) { { foo: :bar } }
 
-            expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
+            subject { resource.send action_name, extra_params }
+
+            it "runs request to resource's API forwarding params" do
+              subject
+
+              expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, extra_params)
+            end
           end
         end
       end

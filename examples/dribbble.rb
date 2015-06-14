@@ -36,5 +36,5 @@ puts "The shot image URL is #{shot.image}"
 # => https://d13yacurqjgara.cloudfront.net/users/85699/screenshots/1600459/daryl_heckle_and_jeckle_oates-dribble.jpg
 
 # Like this post :)
-shot.like
-# => post http://api.dribbble.com/shots/1600459/like?id=1600459
+shot.like user: :brennovich
+# => post http://api.dribbble.com/shots/1600459/like?id=1600459&user=brennovich
