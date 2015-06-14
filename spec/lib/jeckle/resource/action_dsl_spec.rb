@@ -2,186 +2,174 @@ require 'spec_helper'
 
 RSpec.describe Jeckle::Resource::ActionDSL do
   before :all do
-    class PhotoSample
+    class TestPhoto
       include Jeckle::Resource
 
       api :my_super_api
+
+      action :publish
+      action :publish_with_custom_path, path: 'publish_photo'
+      action :publish_with_hash_params, params: { foo: :bar }
+      action :publish_with_block_params, params: -> { { url: url } }
+
+      action :latest, on: :collection
+      action :latest_with_custom_path, on: :collection, path: 'latest_photos'
+      action :latest_with_hash_params, on: :collection, params: { since: :yesterday }
+      action :latest_with_block_params, on: :collection, params: -> { { count: 2 + 2 } }
 
       attribute :id, Integer
       attribute :url, String
     end
   end
 
-  after(:all) { Object.send :remove_const, :PhotoSample }
+  after(:all) { Object.send :remove_const, :TestPhoto }
 
-  let(:resource_class) { PhotoSample }
+  let(:resource_name) { resource_class.resource_name }
+  let(:resource_class) { TestPhoto }
   let(:api) { resource_class.api_mapping[:default_api] }
 
   describe '.action' do
+    let(:response_successful) { true }
+    let(:resource) { resource_class.new id: 9821, url: 'http://img.co/9821.png' }
+    let(:request) { double(response: response).as_null_object }
+
+    before { allow(Jeckle::Request).to receive(:run).and_return request }
+
     context 'when `on` is invalid' do
+      let(:response) { double(body: response_body, success?: response_successful).as_null_object }
+      let(:response_body) { [{ id: 1001, url: 'http://img.co/1.png' }, { id: 1002, url: 'http://img.co/2.png' }] }
+
       it 'raises Jeckle::ArgumentError' do
         expect {
-          resource_class.action :hat, on: :your_head
+          resource_class.class_eval do
+            action :hat, on: :your_head
+          end
         }.to raise_error Jeckle::ArgumentError, /Invalid value for \:on/
       end
     end
 
-    context 'when `on` is valid' do
-      let(:resource_name)  { resource_class.resource_name }
-      let(:resource) { resource_class.new id: 9821, url: 'http://img.co/9821.png' }
+    context 'when `on` is collection' do
+      let(:response) { double(body: response_body, success?: response_successful).as_null_object }
+      let(:response_body) { [{ id: 1001, url: 'http://img.co/1.png' }, { id: 1002, url: 'http://img.co/2.png' }] }
 
-      let(:request) { double(response: response).as_null_object }
+      describe 'defined class method' do
+        it 'runs member action' do
+          resource_class.latest
 
-      let(:path) { nil }
-      let(:params) { nil }
-      let(:action_name) { :my_fancy_action }
+          expect(Jeckle::Request).to have_received(:run).with(api, "test_photos/latest", {})
+        end
 
-      before do
-        resource_class.action action_name, on: target, path: path, params: params
+        context 'with `path` option' do
+          it 'runs request with given path' do
+            resource_class.latest_with_custom_path
 
-        allow(Jeckle::Request).to receive(:run).and_return request
-      end
+            expect(Jeckle::Request).to have_received(:run)
+              .with(api, "test_photos/latest_photos", {})
+          end
+        end
 
-      context 'and `on` is collection' do
-        let(:target) { :collection }
-        let(:path_endpoint) { "#{resource_name}/#{action_name}" }
+        context 'with `params` option' do
+          context 'as hash' do
+            it 'runs request with hash params' do
+              resource_class.latest_with_hash_params
 
-        describe 'defined class method' do
-          let(:response) { double(body: response_body, success?: response_successful).as_null_object }
-          let(:response_body) { [{ id: 1001, url: 'http://img.co/1.png' }, { id: 1002, url: 'http://img.co/2.png' }] }
-          let(:response_successful) { true }
-
-          subject { resource_class.send action_name }
-
-          before { allow(Jeckle::Request).to receive(:run).and_return request }
-
-          describe 'options' do
-            before { subject }
-
-            context 'when path is present' do
-              it 'runs request to given path' do
-                expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
-              end
-            end
-
-            context 'when params is present' do
-              context 'as raw hash' do
-                let(:params) { { user: 'jane' } }
-
-                it 'runs request with given params' do
-                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, params)
-                end
-              end
-
-              context 'as a block' do
-                let(:params) { -> { { since: (2 + 2) } } }
-
-                it 'runs request with given params' do
-                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, { since: 4 })
-                end
-              end
+              expect(Jeckle::Request).to have_received(:run)
+                .with(api, "test_photos/latest_with_hash_params", { since: :yesterday })
             end
           end
 
-          context 'with params' do
-            let(:extra_params) { { foo: :bar } }
+          context 'as block' do
+            it 'runs request with lazily evaluated params' do
+              resource_class.latest_with_block_params
 
-            subject { resource_class.send action_name, extra_params }
-
-            it "runs request to resource's API forwarding params" do
-              subject
-
-              expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, extra_params)
-            end
-          end
-
-          context 'when response is successful' do
-            let(:response_successful) { true }
-
-            it 'returns an array of resources' do
-              expect(subject).to match [
-                an_instance_of(resource_class),
-                an_instance_of(resource_class)
-              ]
-            end
-          end
-
-          context 'when response is not successful' do
-            let(:response_successful) { false }
-
-            it 'returns an empty array' do
-              resources = subject
-
-              expect(resources).to be_empty
+              expect(Jeckle::Request).to have_received(:run)
+                .with(api, "test_photos/latest_with_block_params", { count: 4 })
             end
           end
         end
       end
 
-      context 'and `on` is member' do
-        let(:target) { :member }
-        let(:path_endpoint) { "#{resource_name}/#{resource.id}/#{action_name}" }
+      context 'with inline params' do
+        let(:extra_params) { { foo: :bar } }
 
-        describe 'defined instance method' do
-          let(:response) { double(body: response_body, success?: response_successful).as_null_object }
-          let(:response_body) { { resource_name => resource.attributes } }
-          let(:response_successful) { true }
+        it "runs request to resource's API forwarding params" do
+          resource_class.latest extra_params
 
-          subject { resource.public_send action_name }
+          expect(Jeckle::Request).to have_received(:run).with(api, "test_photos/latest", extra_params)
+        end
+      end
 
-          before { allow(Jeckle::Request).to receive(:run).and_return request }
+      context 'when response is successful' do
+        let(:response_successful) { true }
 
-          describe 'options' do
-            context 'when path is present' do
-              it 'runs request to given path' do
-                subject
+        it 'returns an array of resources' do
+          expect(resource_class.latest).to match [
+            an_instance_of(resource_class),
+            an_instance_of(resource_class)
+          ]
+        end
+      end
 
-                expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
-              end
-            end
+      context 'when response is not successful' do
+        let(:response_successful) { false }
 
-            context 'when params is present' do
-              context 'as raw hash' do
-                let(:params) { { user: 'jane' } }
+        it 'returns an empty array' do
+          expect(resource_class.latest).to be_empty
+        end
+      end
+    end
 
-                it 'runs request with given params' do
-                  subject
+    context 'when `on` is member' do
+      describe 'defined instance method' do
+        let(:response) { double(body: response_body, success?: response_successful).as_null_object }
+        let(:response_body) { { resource_name => resource.attributes } }
+        let(:response_successful) { true }
 
-                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, params)
-                end
-              end
+        it 'runs member action' do
+          resource.publish
 
-              context 'as a block' do
-                let(:params) { -> { attributes } }
+          expect(Jeckle::Request).to have_received(:run).with(api, "test_photos/#{resource.id}/publish", {})
+        end
 
-                it 'runs request with given params' do
-                  subject
+        context 'with `path` option' do
+          it 'runs request with given path' do
+            resource.publish_with_custom_path
 
-                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, resource.attributes)
-                end
+            expect(Jeckle::Request).to have_received(:run)
+              .with(api, "test_photos/#{resource.id}/publish_photo", {})
+          end
+        end
 
-                it 'defines itself lazily' do
-                  resource.url = 'http://duckduckgo.com'
-                  attributes = resource.attributes
+        context 'with `params` option' do
+          context 'as hash' do
+            it 'runs request with hash params' do
+              resource.publish_with_hash_params
 
-                  subject
-
-                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, attributes)
-                end
-              end
+              expect(Jeckle::Request).to have_received(:run)
+                .with(api, "test_photos/#{resource.id}/publish_with_hash_params", { foo: :bar })
             end
           end
 
-          context 'with params' do
-            let(:extra_params) { { foo: :bar } }
+          context 'as block' do
+            it 'runs request with lazily evaluated params' do
+              resource.url = 'http://duckduckgo.com'
 
-            subject { resource.send action_name, extra_params }
+              resource.publish_with_block_params
 
-            it "runs request to resource's API forwarding params" do
-              subject
-
-              expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, extra_params)
+              expect(Jeckle::Request).to have_received(:run)
+                .with(api, "test_photos/#{resource.id}/publish_with_block_params", { url: 'http://duckduckgo.com' })
             end
+          end
+        end
+
+        context 'with inline params' do
+          let(:extra_params) { { foo: :bar } }
+
+          it "runs request forwarding given params" do
+            resource.publish extra_params
+
+            expect(Jeckle::Request).to have_received(:run)
+              .with(api, "test_photos/#{resource.id}/publish", extra_params)
           end
         end
       end
