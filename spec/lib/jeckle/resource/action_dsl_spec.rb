@@ -12,12 +12,13 @@ RSpec.describe Jeckle::Resource::ActionDSL do
     end
   end
 
-  after :all do
-    Object.send :remove_const, :PhotoSample
-  end
+  after(:all) { Object.send :remove_const, :PhotoSample }
 
   let(:resource_class) { PhotoSample }
   let(:resource_name)  { resource_class.resource_name }
+  let(:resource_attrs) { { id: 9821, url: 'http://img.co/9821.png' } }
+  let(:resource) { resource_class.new resource_attrs }
+
   let(:api) { resource_class.api_mapping[:default_api] }
 
   describe '.action' do
@@ -32,9 +33,10 @@ RSpec.describe Jeckle::Resource::ActionDSL do
     context 'when `on` is collection' do
       let(:action_name) { :last_month }
       let(:path) { nil }
+      let(:params) { nil }
       let(:default_endpoint) { "#{resource_name}/#{action_name}" }
 
-      before { resource_class.action action_name, on: :collection, path: path }
+      before { resource_class.action action_name, on: :collection, path: path, params: params }
 
       it 'defines a class method for the action' do
         expect(resource_class).to respond_to action_name
@@ -69,13 +71,26 @@ RSpec.describe Jeckle::Resource::ActionDSL do
         end
 
         context 'with params' do
-          let(:params) { { user: 'jane' } }
+          context 'as raw hash' do
+            let(:params) { { user: 'jane' } }
 
-          it 'runs request with given params' do
-            expect(Jeckle::Request).to receive(:run).with(api, default_endpoint, params).
-              and_return request
+            it 'runs request with given params' do
+              expect(Jeckle::Request).to receive(:run).with(api, default_endpoint, params).
+                and_return request
 
-            resource_class.last_month params
+              resource_class.last_month
+            end
+          end
+
+          context 'as a block' do
+            let(:params) { lambda { resource.attributes } }
+
+            it 'runs request with given params' do
+              expect(Jeckle::Request).to receive(:run).with(api, default_endpoint, resource_attrs).
+                and_return request
+
+              resource_class.last_month
+            end
           end
         end
 
@@ -109,9 +124,6 @@ RSpec.describe Jeckle::Resource::ActionDSL do
       let(:path) { nil }
       let(:default_endpoint) { "#{resource_name}/#{resource.id}/#{action_name}" }
 
-      let(:resource) { resource_class.new resource_attrs }
-      let(:resource_attrs) { { id: 9821, url: 'http://img.co/9821.png' } }
-
       before { resource_class.action action_name, on: :member, path: path }
 
       it 'defines an instance method for the action' do
@@ -125,13 +137,14 @@ RSpec.describe Jeckle::Resource::ActionDSL do
         let(:response_body) { { resource_name => resource_attrs } }
         let(:response_successful) { true }
 
-        before { allow(Jeckle::Request).to receive(:run).and_return request }
-
-        it "runs request to resource's API" do
-          expect(Jeckle::Request).to receive(:run).with(api, default_endpoint, resource_attrs).
-            and_return request
+        before do
+          allow(Jeckle::Request).to receive(:run).and_return request
 
           resource.erase
+        end
+
+        it "runs request to resource's API" do
+          expect(Jeckle::Request).to have_received(:run).with(api, default_endpoint, {})
         end
       end
     end
