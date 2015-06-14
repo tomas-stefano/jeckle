@@ -16,6 +16,8 @@ class Shot
 
   api :dribbble
 
+  action :like, on: :member, method: :post
+
   attribute :id, Integer
   attribute :name, String
   attribute :url, String
@@ -32,3 +34,7 @@ puts "The shot name is #{shot.name}"
 
 puts "The shot image URL is #{shot.image}"
 # => https://d13yacurqjgara.cloudfront.net/users/85699/screenshots/1600459/daryl_heckle_and_jeckle_oates-dribble.jpg
+
+# Like this post :)
+shot.like
+# => post http://api.dribbble.com/shots/1600459/like
