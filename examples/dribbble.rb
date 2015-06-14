@@ -16,7 +16,7 @@ class Shot
 
   api :dribbble
 
-  action :like, on: :member, method: :post
+  action :like, on: :member, method: :post, params: -> { { id: id } }
 
   attribute :id, Integer
   attribute :name, String
@@ -37,4 +37,4 @@ puts "The shot image URL is #{shot.image}"
 
 # Like this post :)
 shot.like
-# => post http://api.dribbble.com/shots/1600459/like
+# => post http://api.dribbble.com/shots/1600459/like?id=1600459

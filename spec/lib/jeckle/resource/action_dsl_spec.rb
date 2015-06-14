@@ -12,35 +12,10 @@ RSpec.describe Jeckle::Resource::ActionDSL do
     end
   end
 
-  shared_examples_for 'ActionOptionable' do
-    context 'when path option is present' do
-      it 'runs request to given path' do
-        expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
-      end
-    end
-
-    context 'when params is present' do
-      context 'as raw hash' do
-        let(:params) { { user: 'jane' } }
-
-        it 'runs request with given params' do
-          expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, params)
-        end
-      end
-
-      context 'as a block' do
-        let(:params) { lambda { resource.attributes } }
-
-        it 'runs request with given params' do
-          expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, resource_attrs)
-        end
-      end
-    end
-  end
-
   after(:all) { Object.send :remove_const, :PhotoSample }
 
   let(:resource_class) { PhotoSample }
+  let(:api) { resource_class.api_mapping[:default_api] }
 
   describe '.action' do
     context 'when `on` is invalid' do
@@ -52,10 +27,8 @@ RSpec.describe Jeckle::Resource::ActionDSL do
     end
 
     context 'when `on` is valid' do
-      let(:api) { resource_class.api_mapping[:default_api] }
       let(:resource_name)  { resource_class.resource_name }
-      let(:resource_attrs) { { id: 9821, url: 'http://img.co/9821.png' } }
-      let(:resource) { resource_class.new resource_attrs }
+      let(:resource) { resource_class.new id: 9821, url: 'http://img.co/9821.png' }
 
       let(:request) { double(response: response).as_null_object }
 
@@ -78,17 +51,45 @@ RSpec.describe Jeckle::Resource::ActionDSL do
           let(:response_body) { [{ id: 1001, url: 'http://img.co/1.png' }, { id: 1002, url: 'http://img.co/2.png' }] }
           let(:response_successful) { true }
 
-          let(:resources) { resource_class.send action_name }
+          subject { resource_class.send action_name }
 
-          it_behaves_like 'ActionOptionable'
+          before { allow(Jeckle::Request).to receive(:run).and_return request }
 
-          before do
-            allow(Jeckle::Request).to receive(:run).and_return request
+          describe 'options' do
+            context 'when path is present' do
+              it 'runs request to given path' do
+                subject
 
-            resources
+                expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
+              end
+            end
+
+            context 'when params is present' do
+              context 'as raw hash' do
+                let(:params) { { user: 'jane' } }
+
+                it 'runs request with given params' do
+                  subject
+
+                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, params)
+                end
+              end
+
+              context 'as a block' do
+                let(:params) { -> { { since: (2 + 2) } } }
+
+                it 'runs request with given params' do
+                  subject
+
+                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, { since: 4 })
+                end
+              end
+            end
           end
 
           it "runs request to resource's API" do
+            subject
+
             expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
           end
 
@@ -96,7 +97,7 @@ RSpec.describe Jeckle::Resource::ActionDSL do
             let(:response_successful) { true }
 
             it 'returns an array of resources' do
-              expect(resources).to match [
+              expect(subject).to match [
                 an_instance_of(resource_class),
                 an_instance_of(resource_class)
               ]
@@ -107,7 +108,7 @@ RSpec.describe Jeckle::Resource::ActionDSL do
             let(:response_successful) { false }
 
             it 'returns an empty array' do
-              resources = resource_class.send action_name
+              resources = subject
 
               expect(resources).to be_empty
             end
@@ -121,18 +122,57 @@ RSpec.describe Jeckle::Resource::ActionDSL do
 
         describe 'defined instance method' do
           let(:response) { double(body: response_body, success?: response_successful).as_null_object }
-          let(:response_body) { { resource_name => resource_attrs } }
+          let(:response_body) { { resource_name => resource.attributes } }
           let(:response_successful) { true }
 
-          before do
-            allow(Jeckle::Request).to receive(:run).and_return request
+          subject { resource.public_send action_name }
 
-            resource.public_send action_name
+          before { allow(Jeckle::Request).to receive(:run).and_return request }
+
+          describe 'options' do
+            context 'when path is present' do
+              it 'runs request to given path' do
+                subject
+
+                expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
+              end
+            end
+
+            context 'when params is present' do
+              context 'as raw hash' do
+                let(:params) { { user: 'jane' } }
+
+                it 'runs request with given params' do
+                  subject
+
+                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, params)
+                end
+              end
+
+              context 'as a block' do
+                let(:params) { -> { attributes } }
+
+                it 'runs request with given params' do
+                  subject
+
+                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, resource.attributes)
+                end
+
+                it 'defines itself lazily' do
+                  resource.url = 'http://duckduckgo.com'
+                  attributes = resource.attributes
+
+                  subject
+
+                  expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, attributes)
+                end
+              end
+            end
           end
 
-          it_behaves_like 'ActionOptionable'
-
           it "runs request to resource's API" do
+            subject
+
             expect(Jeckle::Request).to have_received(:run).with(api, path_endpoint, {})
           end
         end

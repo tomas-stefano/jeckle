@@ -17,12 +17,20 @@ module Jeckle
         case action_config[:act_on]
         when :collection
           define_singleton_method action_name do
+            if action_config[:params].is_a? Proc
+              action_config[:params] = instance_exec(&action_config[:params])
+            end
+
             collection = run_collection_request(action_name, action_config[:params], options)
 
             Array.wrap(collection).collect { |attrs| new attrs }
           end
         when :member
           define_method action_name do
+            if action_config[:params].is_a? Proc
+              action_config[:params] = instance_exec(&action_config[:params])
+            end
+
             options[:key] = public_send options.fetch(:key, :id)
 
             self.attributes = self.class.run_member_request action_name, action_config[:params], options
@@ -63,8 +71,6 @@ module Jeckle
         {}.tap do |opts|
           opts[:act_on] = options.delete(:on) || :member
           opts[:params] = options.delete(:params) || {}
-
-          opts[:params] = opts[:params].call if opts[:params].is_a? Proc
         end
       end
 
