@@ -11,6 +11,7 @@ module Jeckle
       #    - method [get|post|put|patch|delete]
       #    - on     [member|collection]
       #    - path
+      #    - resource_path
       def action(action_name, options = {})
         action_on = options.delete(:on) || :member
         action_params = options.delete(:params) || {}
@@ -41,16 +42,17 @@ module Jeckle
             self.attributes = self.class.run_member_request action_name, params, options
           end
         else
-          raise Jeckle::ArgumentError, %(Invalid value for :on option.
+          fail Jeckle::ArgumentError, %(Invalid value for :on option.
             Expected: member|collection
             Got: #{action_on})
         end
       end
 
       def run_collection_request(action_name, params = {}, options = {})
+        resource_path = options.delete(:resource_path) || resource_name
         path = options.delete(:path) || action_name
 
-        endpoint = "#{resource_name}/#{path}"
+        endpoint = "#{resource_path}/#{path}"
         request = run_request endpoint, options.merge(params)
         response = request.response
 
@@ -60,10 +62,11 @@ module Jeckle
       end
 
       def run_member_request(action_name, params = {}, options = {})
+        resource_path = options.delete(:resource_path) || resource_name
         path = options.delete(:path) || action_name
         key = options.delete(:key)
 
-        endpoint = "#{resource_name}/#{key}/#{path}"
+        endpoint = "#{resource_path}/#{key}/#{path}"
         request = run_request endpoint, options.merge(params)
         response = request.response
 
@@ -73,7 +76,7 @@ module Jeckle
       private
 
       def parse_response(body)
-        body.kind_of?(Array) ? body : body[resource_name]
+        body.is_a?(Array) ? body : body[resource_name]
       end
     end
   end

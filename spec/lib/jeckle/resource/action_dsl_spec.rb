@@ -11,11 +11,13 @@ RSpec.describe Jeckle::Resource::ActionDSL do
       action :publish_with_custom_path, path: 'publish_photo'
       action :publish_with_hash_params, params: { foo: :bar }
       action :publish_with_block_params, params: -> { { url: url } }
+      action :publish_with_custom_resource_path, resource_path: 'premium_photos'
 
       action :latest, on: :collection
       action :latest_with_custom_path, on: :collection, path: 'latest_photos'
       action :latest_with_hash_params, on: :collection, params: { since: :yesterday }
       action :latest_with_block_params, on: :collection, params: -> { { count: 2 + 2 } }
+      action :latest_with_custom_resource_path, on: :collection, resource_path: 'premium_photos'
 
       attribute :id, Integer
       attribute :url, String
@@ -65,6 +67,15 @@ RSpec.describe Jeckle::Resource::ActionDSL do
 
             expect(Jeckle::Request).to have_received(:run)
               .with(api, "test_photos/latest_photos", {})
+          end
+        end
+
+        context 'with `resource_path` options' do
+          it 'runs request using given `resource_path` instead `resource_name`' do
+            resource_class.latest_with_custom_resource_path
+
+            expect(Jeckle::Request).to have_received(:run)
+              .with(api, "premium_photos/latest_with_custom_resource_path", {})
           end
         end
 
@@ -137,6 +148,15 @@ RSpec.describe Jeckle::Resource::ActionDSL do
 
             expect(Jeckle::Request).to have_received(:run)
               .with(api, "test_photos/#{resource.id}/publish_photo", {})
+          end
+        end
+
+        context 'with `resource_path` option' do
+          it 'runs request with given `resource_path` instead `resource_name`' do
+            resource.publish_with_custom_resource_path
+
+            expect(Jeckle::Request).to have_received(:run)
+              .with(api, "premium_photos/#{resource.id}/publish_with_custom_resource_path", {})
           end
         end
 
