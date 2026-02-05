@@ -22,7 +22,7 @@ RSpec.describe Jeckle::RESTActions do
     end
   end
 
-  describe '.search' do
+  describe '.list' do
     let(:fake_request) { OpenStruct.new response: OpenStruct.new(body: body) }
 
     let(:query) { { name: 'cocada' } }
@@ -30,17 +30,17 @@ RSpec.describe Jeckle::RESTActions do
     context 'when there are results WITHOUT root node' do
       let(:body) { [{ id: 1001 }, { id: 1002 }] }
 
-      it 'calls default API connection with GET and search params' do
+      it 'calls default API connection with GET and list params' do
         expect(Jeckle::Request).to receive(:run)
           .with(api, 'fake_resources', { params: query }).and_return(fake_request)
 
-        FakeResource.search query
+        FakeResource.list query
       end
 
       it 'returns an Array of resources' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
-        expect(FakeResource.search(query)).to match [
+        expect(FakeResource.list(query)).to match [
           an_instance_of(FakeResource),
           an_instance_of(FakeResource)
         ]
@@ -55,7 +55,7 @@ RSpec.describe Jeckle::RESTActions do
       it 'returns an Array of resources' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
-        expect(FakeResource.search(query)).to match [
+        expect(FakeResource.list(query)).to match [
           an_instance_of(FakeResource),
           an_instance_of(FakeResource)
         ]
@@ -68,7 +68,7 @@ RSpec.describe Jeckle::RESTActions do
       it 'returns an empty Array' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
-        expect(FakeResource.search(query)).to match []
+        expect(FakeResource.list(query)).to match []
       end
     end
 
@@ -77,12 +77,22 @@ RSpec.describe Jeckle::RESTActions do
       let(:query) { { resource_name: endpoint, name: 'cocada' } }
       let(:body) { [{ id: 1001 }, { id: 1002 }] }
 
-      it 'calls default API connection with GET and search params' do
+      it 'calls default API connection with GET and list params' do
         expect(Jeckle::Request).to receive(:run)
           .with(api, endpoint, { params: query }).and_return(fake_request)
 
-        FakeResource.search query
+        FakeResource.list query
       end
+    end
+  end
+
+  describe '.search' do
+    it 'delegates to list with a deprecation warning' do
+      allow(Jeckle::Request).to receive(:run)
+        .and_return(OpenStruct.new(response: OpenStruct.new(body: [])))
+
+      expect { FakeResource.search(name: 'test') }
+        .to output(/DEPRECATION.*search.*list/).to_stderr
     end
   end
 end

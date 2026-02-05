@@ -10,13 +10,18 @@ module Jeckle
         new attributes
       end
 
-      def search(params = {})
+      def list(params = {})
         custom_resource_name = params.delete(:resource_name) if params.is_a?(Hash)
 
         response   = run_request(custom_resource_name || resource_name, params: params).response.body || []
         collection = response.is_a?(Array) ? response : response[resource_name]
 
         Array(collection).collect { |attrs| new attrs }
+      end
+
+      def search(params = {})
+        warn '[DEPRECATION] `search` is deprecated. Please use `list` instead.'
+        list(params)
       end
     end
   end
