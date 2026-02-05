@@ -2,10 +2,8 @@
 
 require 'spec_helper'
 
-class AttributeAliasingResource
-  include Jeckle::Resource
-
-  attribute :firstName, String, as: :first_name
+class AttributeAliasingResource < Jeckle::Resource
+  attribute :firstName, Jeckle::Types::String, as: :first_name
 end
 
 RSpec.describe Jeckle::AttributeAliasing do

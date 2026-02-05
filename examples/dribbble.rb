@@ -13,15 +13,13 @@ Jeckle.configure do |config|
   end
 end
 
-class Shot
-  include Jeckle::Resource
-
+class Shot < Jeckle::Resource
   api :dribbble
 
-  attribute :id, Integer
-  attribute :name, String
-  attribute :url, String
-  attribute :image_url, String, as: :image
+  attribute :id, Jeckle::Types::Integer
+  attribute :name, Jeckle::Types::String
+  attribute :url, Jeckle::Types::String
+  attribute :image_url, Jeckle::Types::String, as: :image
 end
 
 shot = Shot.find 1_600_459

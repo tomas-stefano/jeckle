@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 require 'active_model'
+require 'dry-struct'
+require 'dry/types'
 require 'faraday'
-require 'virtus'
 
 require 'jeckle/version'
 
 %w[
-  setup api model request http rest_actions resource errors attribute_aliasing
+  types setup api model request http rest_actions attribute_aliasing resource errors
   middleware/raise_error
 ].each do |file_name|
   require "jeckle/#{file_name}"

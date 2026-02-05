@@ -2,38 +2,26 @@
 
 module Jeckle
   module HTTP
-    def self.included(base)
-      base.extend Jeckle::HTTP::APIMapping
-    end
-
     module APIMapping
       def inherited(base)
-        base.class_eval do
-          @api_mapping = superclass.api_mapping.dup
-        end
+        super
+        base.instance_variable_set(:@api_mapping, api_mapping.dup)
       end
 
       # The name of the resource that Jeckle uses to make the request
       #
       # @example
       #
-      #   module Dribble
-      #     class Shot
-      #       include Jeckle::Resource
-      #     end
+      #   class Shot < Jeckle::Resource
       #   end
       #
       #   Shot.resource_name # => Will request for '/shots' resource
       #
       # To overwrite this behaviour, rewrite the resource name method in the class:
       #
-      #   module OtherApi
-      #     class Project
-      #       include Jeckle::Resource
-      #
-      #       def self.resource_name
-      #         '/project'
-      #       end
+      #   class Project < Jeckle::Resource
+      #     def self.resource_name
+      #       '/project'
       #     end
       #   end
       #
@@ -51,8 +39,7 @@ module Jeckle
       #     end
       #   end
       #
-      #   class Shot
-      #     include Jeckle::Resource
+      #   class Shot < Jeckle::Resource
       #     api :dribbble
       #   end
       #
