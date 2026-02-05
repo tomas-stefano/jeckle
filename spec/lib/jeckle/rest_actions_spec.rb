@@ -18,7 +18,7 @@ RSpec.describe Jeckle::RESTActions do
     it 'returns an instance of resource' do
       allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
-      expect(FakeResource.find 1001).to be_an_instance_of(FakeResource)
+      expect(FakeResource.find(1001)).to be_an_instance_of(FakeResource)
     end
   end
 
@@ -40,7 +40,7 @@ RSpec.describe Jeckle::RESTActions do
       it 'returns an Array of resources' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
-        expect(FakeResource.search query).to match [
+        expect(FakeResource.search(query)).to match [
           an_instance_of(FakeResource),
           an_instance_of(FakeResource)
         ]
@@ -49,13 +49,13 @@ RSpec.describe Jeckle::RESTActions do
 
     context 'when there are results WITH root node' do
       let(:body) do
-        { 'fake_resources' => [{ id: 1001 }, { id: 1002 } ] }
+        { 'fake_resources' => [{ id: 1001 }, { id: 1002 }] }
       end
 
       it 'returns an Array of resources' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
-        expect(FakeResource.search query).to match [
+        expect(FakeResource.search(query)).to match [
           an_instance_of(FakeResource),
           an_instance_of(FakeResource)
         ]
@@ -68,7 +68,7 @@ RSpec.describe Jeckle::RESTActions do
       it 'returns an empty Array' do
         allow(Jeckle::Request).to receive(:run).and_return(fake_request)
 
-        expect(FakeResource.search query).to match []
+        expect(FakeResource.search(query)).to match []
       end
     end
 

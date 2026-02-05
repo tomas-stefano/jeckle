@@ -18,8 +18,8 @@ module Jeckle
     end
 
     def basic_auth=(credential_params)
-      [:username, :password].all? do |key|
-        credential_params.has_key? key
+      %i[username password].all? do |key|
+        credential_params.key? key
       end or raise Jeckle::NoUsernameOrPasswordError, credential_params
 
       @basic_auth = credential_params

@@ -15,22 +15,22 @@ RSpec.shared_examples_for Jeckle::Request do
   end
 
   it 'sets global api params defined via register block' do
-    expect_any_instance_of(Faraday::Request).to receive(:params=).with(api_params).
-      at_least(:once).and_call_original
+    expect_any_instance_of(Faraday::Request).to receive(:params=).with(api_params)
+                                                                 .at_least(:once).and_call_original
 
     described_class.run api, endpoint, options
   end
 
   it 'sets request params' do
-    expect_any_instance_of(Faraday::Request).to receive(:params=).with(options).
-      at_least(:once).and_call_original
+    expect_any_instance_of(Faraday::Request).to receive(:params=).with(options)
+                                                                 .at_least(:once).and_call_original
 
     described_class.run api, endpoint, options
   end
 
   it 'sets global api headers defined via register block' do
-    expect_any_instance_of(Faraday::Request).to receive(:headers=).with(api.connection.headers).
-      at_least(:once).and_call_original
+    expect_any_instance_of(Faraday::Request).to receive(:headers=).with(api.connection.headers)
+                                                                  .at_least(:once).and_call_original
 
     described_class.run api, endpoint, options
   end
@@ -40,8 +40,8 @@ RSpec.shared_examples_for Jeckle::Request do
     let(:expected_headers) { api.connection.headers.merge options[:headers] }
 
     it 'merges request headers with global api headers' do
-      expect_any_instance_of(Faraday::Request).to receive(:headers=).with(expected_headers).
-        at_least(:once).and_call_original
+      expect_any_instance_of(Faraday::Request).to receive(:headers=).with(expected_headers)
+                                                                    .at_least(:once).and_call_original
 
       described_class.run api, endpoint, options
     end

@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Jeckle::Setup do
   describe '.register' do
     context 'when block is given' do
-      let(:registered_apis) { Jeckle::Setup.registered_apis }
+      let(:registered_apis) { described_class.registered_apis }
 
       it 'returns a new registered API' do
         expect(registered_apis).to have_key(:my_super_api)
@@ -25,7 +25,7 @@ RSpec.describe Jeckle::Setup do
 
       describe 'logger' do
         it 'assigns to the api instance' do
-          expect(registered_apis[:my_super_api].logger).to be_kind_of Logger
+          expect(registered_apis[:my_super_api].logger).to be_a Logger
         end
       end
 
@@ -50,9 +50,9 @@ RSpec.describe Jeckle::Setup do
 
     context 'when block is not given' do
       it 'raises no block given exception' do
-        expect {
-          Jeckle::Setup.register(:my_api)
-        }.to raise_exception(LocalJumpError)
+        expect do
+          described_class.register(:my_api)
+        end.to raise_exception(LocalJumpError)
       end
     end
   end
