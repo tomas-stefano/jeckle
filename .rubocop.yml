@@ -62,6 +62,9 @@ RSpec/MultipleExpectations:
 RSpec/NestedGroups:
   Enabled: false
 
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
 RSpec/StubbedMock:
   Enabled: false
 
