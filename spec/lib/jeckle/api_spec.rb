@@ -146,6 +146,65 @@ RSpec.describe Jeckle::API do
     end
   end
 
+  describe '#bearer_token=' do
+    subject(:jeckle_api) { described_class.new }
+
+    before { jeckle_api.base_uri = 'http://example.com' }
+
+    it 'assigns the bearer token' do
+      jeckle_api.bearer_token = 'my-token'
+      expect(jeckle_api.bearer_token).to eq 'my-token'
+    end
+
+    it 'resets the cached connection' do
+      jeckle_api.connection
+      jeckle_api.bearer_token = 'my-token'
+      expect(jeckle_api.connection.builder.handlers).to include Faraday::Request::Authorization
+    end
+  end
+
+  describe '#api_key=' do
+    subject(:jeckle_api) { described_class.new }
+
+    before { jeckle_api.base_uri = 'http://example.com' }
+
+    context 'with header-based api key' do
+      before { jeckle_api.api_key = { value: 'secret', header: 'X-Api-Key' } }
+
+      it 'assigns the api key config' do
+        expect(jeckle_api.api_key).to eq(value: 'secret', header: 'X-Api-Key')
+      end
+
+      it 'sets the header on the connection' do
+        expect(jeckle_api.connection.headers['X-Api-Key']).to eq 'secret'
+      end
+    end
+
+    context 'with param-based api key' do
+      before { jeckle_api.api_key = { value: 'secret', param: 'api_key' } }
+
+      it 'assigns the api key config' do
+        expect(jeckle_api.api_key).to eq(value: 'secret', param: 'api_key')
+      end
+
+      it 'sets the param on the connection' do
+        expect(jeckle_api.connection.params['api_key']).to eq 'secret'
+      end
+    end
+
+    context 'with invalid config' do
+      it 'raises ArgumentError when value is missing' do
+        expect { jeckle_api.api_key = { header: 'X-Api-Key' } }
+          .to raise_error Jeckle::ArgumentError
+      end
+
+      it 'raises ArgumentError when neither header nor param is provided' do
+        expect { jeckle_api.api_key = { value: 'secret' } }
+          .to raise_error Jeckle::ArgumentError
+      end
+    end
+  end
+
   describe '#timeout' do
     let(:timeout) { nil }
     let(:open_timeout) { nil }

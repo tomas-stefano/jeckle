@@ -17,6 +17,14 @@ Metrics/AbcSize:
   Exclude:
     - lib/jeckle/api.rb
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - lib/jeckle/api.rb
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - lib/jeckle/api.rb
+
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
@@ -24,6 +32,7 @@ Metrics/BlockLength:
 
 Metrics/MethodLength:
   Exclude:
+    - lib/jeckle/api.rb
     - lib/jeckle/request.rb
     - lib/jeckle/attribute_aliasing.rb
 
