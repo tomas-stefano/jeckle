@@ -2,10 +2,6 @@
 
 module Jeckle
   module RESTActions
-    def self.included(base)
-      base.extend Jeckle::RESTActions::Collection
-    end
-
     module Collection
       def find(id)
         endpoint = "#{resource_name}/#{id}"
