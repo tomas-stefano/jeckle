@@ -86,6 +86,63 @@ RSpec.describe Jeckle::RESTActions do
     end
   end
 
+  describe '.create' do
+    let(:attrs) { { id: 2001 } }
+    let(:fake_request) { OpenStruct.new response: OpenStruct.new(body: attrs) }
+
+    it 'calls default API connection with POST' do
+      expect(Jeckle::Request).to receive(:run)
+        .with(api, 'fake_resources', { method: :post, body: attrs }).and_return(fake_request)
+
+      FakeResource.create attrs
+    end
+
+    it 'returns an instance of resource' do
+      allow(Jeckle::Request).to receive(:run).and_return(fake_request)
+
+      result = FakeResource.create(attrs)
+      expect(result).to be_an_instance_of(FakeResource)
+      expect(result.id).to eq 2001
+    end
+  end
+
+  describe '.update' do
+    let(:attrs) { { id: 1001 } }
+    let(:fake_request) { OpenStruct.new response: OpenStruct.new(body: attrs) }
+
+    it 'calls default API connection with PATCH' do
+      expect(Jeckle::Request).to receive(:run)
+        .with(api, 'fake_resources/1001', { method: :patch, body: attrs }).and_return(fake_request)
+
+      FakeResource.update 1001, attrs
+    end
+
+    it 'returns an instance of resource' do
+      allow(Jeckle::Request).to receive(:run).and_return(fake_request)
+
+      result = FakeResource.update(1001, attrs)
+      expect(result).to be_an_instance_of(FakeResource)
+      expect(result.id).to eq 1001
+    end
+  end
+
+  describe '.destroy' do
+    let(:fake_request) { OpenStruct.new response: OpenStruct.new(body: nil) }
+
+    it 'calls default API connection with DELETE' do
+      expect(Jeckle::Request).to receive(:run)
+        .with(api, 'fake_resources/1001', { method: :delete }).and_return(fake_request)
+
+      FakeResource.destroy 1001
+    end
+
+    it 'returns true' do
+      allow(Jeckle::Request).to receive(:run).and_return(fake_request)
+
+      expect(FakeResource.destroy(1001)).to be true
+    end
+  end
+
   describe '.search' do
     it 'delegates to list with a deprecation warning' do
       allow(Jeckle::Request).to receive(:run)

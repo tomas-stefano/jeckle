@@ -19,6 +19,25 @@ module Jeckle
         Array(collection).collect { |attrs| new attrs }
       end
 
+      def create(attrs = {})
+        response = run_request(resource_name, method: :post, body: attrs).response.body
+
+        new response
+      end
+
+      def update(id, attrs = {})
+        endpoint = "#{resource_name}/#{id}"
+        response = run_request(endpoint, method: :patch, body: attrs).response.body
+
+        new response
+      end
+
+      def destroy(id)
+        endpoint = "#{resource_name}/#{id}"
+        run_request(endpoint, method: :delete)
+        true
+      end
+
       def search(params = {})
         warn '[DEPRECATION] `search` is deprecated. Please use `list` instead.'
         list(params)

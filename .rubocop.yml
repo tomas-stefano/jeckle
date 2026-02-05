@@ -27,6 +27,10 @@ Metrics/MethodLength:
     - lib/jeckle/request.rb
     - lib/jeckle/attribute_aliasing.rb
 
+Naming/PredicateMethod:
+  AllowedMethods:
+    - destroy
+
 Gemspec/DevelopmentDependencies:
   Enabled: false
 
