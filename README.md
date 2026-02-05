@@ -52,21 +52,19 @@ end
 Following the previous example, Dribbble.com consists of pieces of web designers work called "Shots". Each shot has the attributes `id`, `name`, `url` and `image_url`. A Jeckle resource representing Dribbble's shots would be something like this:
 
 ```ruby
-class Shot
-  include Jeckle::Resource
-
+class Shot < Jeckle::Resource
   api :dribbble
 
-  attribute :id, Integer
-  attribute :name, String
-  attribute :url, String
-  attribute :image_url, String
+  attribute :id, Jeckle::Types::Integer
+  attribute :name, Jeckle::Types::String
+  attribute :url, Jeckle::Types::String
+  attribute :image_url, Jeckle::Types::String
 end
 ```
 
 ### Fetching data
 
-The resource class allows us to search shots through HTTP requests to the API, based on the provided information. For example, we can find a specific shot by providing its id to the `find` method:
+The resource class allows us to list shots through HTTP requests to the API, based on the provided information. For example, we can find a specific shot by providing its id to the `find` method:
 
 ```ruby
 # GET http://api.dribbble.com/shots/1600459
@@ -86,11 +84,11 @@ shot.image_url
 => "https://d13yacurqjgara.cloudfront.net/users/85699/screenshots/1600459/daryl_heckle_and_jeckle_oates-dribble.jpg"
 ```
 
-You can also look for many shots matching one or more attributes, by using the `search` method:
+You can also look for many shots matching one or more attributes, by using the `list` method:
 
 ```ruby
 # GET http://api.dribbble.com/shots?name=avengers
-shots = Shot.search name: 'avengers'
+shots = Shot.list name: 'avengers'
 ```
 
 ### Attribute Aliasing
@@ -98,7 +96,7 @@ shots = Shot.search name: 'avengers'
 Sometimes you want to call the API's attributes something else, either because their names aren't very concise or because they're out of you app's convention. If that's the case, you can add an `as` option:
 
 ```ruby
-attribute :thumbnailSize, String, as: :thumbnail_size
+attribute :thumbnailSize, Jeckle::Types::String, as: :thumbnail_size
 ```
 
 Both mapping will work:
@@ -110,8 +108,6 @@ shot.thumbnailSize
 shot.thumbnail_size
 => "50x50"
 ```
-
-We're all set! Now we can expand the mapping of our API, e.g to add ability to search Dribbble Designer directory by adding Designer class, or we can expand the original mapping of Shot class to include more attributes, such as tags or comments.
 
 ### Error Handling
 
@@ -155,6 +151,50 @@ The error hierarchy:
       - `BadRequestError` (400), `UnauthorizedError` (401), `ForbiddenError` (403), `NotFoundError` (404), `UnprocessableEntityError` (422), `TooManyRequestsError` (429)
     - `Jeckle::ServerError` — 5xx errors
       - `InternalServerError` (500), `ServiceUnavailableError` (503)
+
+We're all set! Now we can expand the mapping of our API, e.g to add ability to search Dribbble Designer directory by adding Designer class, or we can expand the original mapping of Shot class to include more attributes, such as tags or comments.
+
+## Migration from 0.4.x
+
+### Resource definition
+
+Resources now use class inheritance instead of module inclusion:
+
+```ruby
+# Before (0.4.x)
+class Shot
+  include Jeckle::Resource
+  attribute :id, Integer
+end
+
+# After (0.6.0+)
+class Shot < Jeckle::Resource
+  attribute :id, Jeckle::Types::Integer
+end
+```
+
+### Attribute types
+
+Use `Jeckle::Types::*` instead of Ruby constants:
+
+| Before | After |
+|--------|-------|
+| `Integer` | `Jeckle::Types::Integer` |
+| `String` | `Jeckle::Types::String` |
+| `Float` | `Jeckle::Types::Float` |
+| `Boolean` | `Jeckle::Types::Bool` |
+
+### Collection method
+
+The `search` method has been renamed to `list`:
+
+```ruby
+# Before
+Shot.search name: 'avengers'
+
+# After
+Shot.list name: 'avengers'
+```
 
 ## Examples
 
