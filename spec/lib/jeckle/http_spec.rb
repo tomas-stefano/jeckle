@@ -10,8 +10,8 @@ RSpec.describe Jeckle::HTTP do
 
     context 'when resource class is namespaced' do
       before do
-        MySuperApi = Module.new # rubocop:disable Lint/ConstantDefinitionInBlock
-        MySuperApi::FakeResource = Class.new(::FakeResource) # rubocop:disable Lint/ConstantDefinitionInBlock
+        MySuperApi = Module.new
+        MySuperApi::FakeResource = Class.new(FakeResource)
       end
 
       it 'ignores namespace' do
