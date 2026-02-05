@@ -9,7 +9,7 @@ require 'jeckle/version'
 
 %w[
   types setup api model request http rest_actions attribute_aliasing resource errors
-  middleware/raise_error
+  collection middleware/raise_error
 ].each do |file_name|
   require "jeckle/#{file_name}"
 end

@@ -38,6 +38,10 @@ module Jeckle
         true
       end
 
+      def list_each(per_page: Jeckle::Collection::DEFAULT_PER_PAGE, **params)
+        Jeckle::Collection.new(resource_class: self, per_page: per_page, params: params)
+      end
+
       def search(params = {})
         warn '[DEPRECATION] `search` is deprecated. Please use `list` instead.'
         list(params)

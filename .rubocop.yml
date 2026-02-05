@@ -30,6 +30,10 @@ Metrics/BlockLength:
     - spec/**/*
     - "*.gemspec"
 
+Metrics/ParameterLists:
+  Exclude:
+    - lib/jeckle/collection.rb
+
 Metrics/MethodLength:
   Exclude:
     - lib/jeckle/api.rb
