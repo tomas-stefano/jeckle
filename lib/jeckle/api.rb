@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jeckle
   class API
     attr_accessor :logger
@@ -10,14 +12,14 @@ module Jeckle
         conn.params = params
         conn.response :logger, logger
 
-        conn.basic_auth basic_auth[:username], basic_auth[:password] if basic_auth
-        conn.instance_exec &@middlewares_block if @middlewares_block
+        conn.request :authorization, :basic, basic_auth[:username], basic_auth[:password] if basic_auth
+        conn.instance_exec(&@middlewares_block) if @middlewares_block
       end
     end
 
     def basic_auth=(credential_params)
-      [:username, :password].all? do |key|
-        credential_params.has_key? key
+      %i[username password].all? do |key|
+        credential_params.key? key
       end or raise Jeckle::NoUsernameOrPasswordError, credential_params
 
       @basic_auth = credential_params

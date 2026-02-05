@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'jeckle'
 
 # Here is an example using the Dribbble API
@@ -22,7 +24,7 @@ class Shot
   attribute :image_url, String, as: :image
 end
 
-shot = Shot.find 1600459
+shot = Shot.find 1_600_459
 
 puts "The shot id is #{shot.id}"
 # => 1600459

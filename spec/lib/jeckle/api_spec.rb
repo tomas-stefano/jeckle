@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe Jeckle::API do
@@ -9,12 +11,12 @@ RSpec.describe Jeckle::API do
     let(:fake_faraday_connection) { Faraday::Connection.new }
 
     it 'returns a Faraday connection' do
-      expect(jeckle_api.connection).to be_kind_of Faraday::Connection
+      expect(jeckle_api.connection).to be_a Faraday::Connection
     end
 
     it 'caches the connection' do
       expect(Faraday).to receive(:new).once.and_return(fake_faraday_connection)
-        .with(url: jeckle_api.base_uri, request: jeckle_api.timeout)
+                                      .with(url: jeckle_api.base_uri, request: jeckle_api.timeout)
 
       expect(fake_faraday_connection).to receive(:tap).once.and_call_original
 
@@ -25,8 +27,8 @@ RSpec.describe Jeckle::API do
       expect(jeckle_api.connection.headers).to include 'Content-Type' => 'application/json'
     end
 
-    it 'assigns basic auth headers' do
-      expect(jeckle_api.connection.headers.keys).to include 'Authorization'
+    it 'assigns basic auth middleware' do
+      expect(jeckle_api.connection.builder.handlers).to include Faraday::Request::Authorization
     end
 
     it 'assigns params there will be used on all requests' do
@@ -41,16 +43,15 @@ RSpec.describe Jeckle::API do
     context 'when middlewares_block is set' do
       before do
         jeckle_api.middlewares do
-          request :retry, max: 2, interval: 0.05
+          request :json
           request :instrumentation
         end
       end
 
       it 'adds middlewares on connection middleware stack' do
-        expect(jeckle_api.connection.builder.handlers.last(2)).to eq [
-          Faraday::Request::Retry,
-          Faraday::Request::Instrumentation
-        ]
+        handlers = jeckle_api.connection.builder.handlers
+        expect(handlers).to include(Faraday::Request::Json)
+        expect(handlers).to include(Faraday::Request::Instrumentation)
       end
     end
   end
@@ -77,7 +78,7 @@ RSpec.describe Jeckle::API do
     subject(:jeckle_api) { described_class.new }
 
     context 'when there is the required credentials' do
-      let(:credentials) { { username: 'sly', password: 'IAmTheLaw'} }
+      let(:credentials) { { username: 'sly', password: 'IAmTheLaw' } }
 
       before { jeckle_api.basic_auth = credentials }
 
@@ -132,15 +133,15 @@ RSpec.describe Jeckle::API do
       it 'assigns middleware_block' do
         jeckle_api.middlewares { 123 }
 
-        expect(jeckle_api.instance_variable_get('@middlewares_block')).not_to be_nil
+        expect(jeckle_api.instance_variable_get(:@middlewares_block)).not_to be_nil
       end
     end
 
     context 'when no block is given' do
       it 'raises ArgumentError' do
-        expect {
+        expect do
           jeckle_api.middlewares
-        }.to raise_error Jeckle::ArgumentError, /A block is required when configuring API middlewares/
+        end.to raise_error Jeckle::ArgumentError, /A block is required when configuring API middlewares/
       end
     end
   end

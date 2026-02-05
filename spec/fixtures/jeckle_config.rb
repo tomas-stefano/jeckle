@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 Jeckle.configure do |config|
   config.register :my_super_api do |api|
     api.base_uri = 'http://my-super-api.com.br'
     api.headers = { 'Content-Type' => 'application/json' }
-    api.logger = Logger.new(STDOUT)
+    api.logger = Logger.new($stdout)
     api.basic_auth = { username: 'steven_seagal', password: 'youAlwaysLose' }
     api.namespaces = { prefix: 'api', version: 'v1' }
     api.params = { hello: 'world' }
@@ -19,7 +21,7 @@ Jeckle.configure do |config|
   config.register :another_api do |api|
     api.base_uri = 'http://another-api.com.br'
     api.headers = { 'Content-Type' => 'application/json' }
-    api.logger = Logger.new(STDOUT)
+    api.logger = Logger.new($stdout)
     api.basic_auth = { username: 'heisenberg', password: 'metaAfetaAMina' }
     api.namespaces = { prefix: 'api', version: 'v5' }
     api.params = { hi: 'there' }

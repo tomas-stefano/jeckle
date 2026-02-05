@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Jeckle
   module RESTActions
     def self.included(base)
-      base.send :extend, Jeckle::RESTActions::Collection
+      base.extend Jeckle::RESTActions::Collection
     end
 
     module Collection
@@ -13,10 +15,10 @@ module Jeckle
       end
 
       def search(params = {})
-        custom_resource_name = params.delete(:resource_name) if params.kind_of?(Hash)
+        custom_resource_name = params.delete(:resource_name) if params.is_a?(Hash)
 
         response   = run_request(custom_resource_name || resource_name, params: params).response.body || []
-        collection = response.kind_of?(Array) ? response : response[resource_name]
+        collection = response.is_a?(Array) ? response : response[resource_name]
 
         Array(collection).collect { |attrs| new attrs }
       end

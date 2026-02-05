@@ -1,9 +1,12 @@
 ## v.0.4.0
 
-* Now params should be received by `run_request` through a `:params` option, instead of
-being mixed with the options hash (`:method`, `:headers` and `:body`)
-* Added support for `PATCH` method on `Jeckle::Request`
-* Added definition of attribute aliases. Example: `attribute :firstName, String, as: :first_name`
+* Upgrade Faraday to 2.x (`~> 2.0`)
+* Drop support for Ruby < 3.0
+* Replace Travis CI with GitHub Actions
+* Add Rubocop with rubocop-rspec and rubocop-performance
+* Add `frozen_string_literal: true` to all Ruby files
+* Remove `faraday_middleware` dependency
+* Modernize Ruby syntax (`base.include` instead of `base.send :include`)
 
 ## v.0.3.0
 

@@ -1,0 +1,66 @@
+plugins:
+  - rubocop-performance
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: enable
+  SuggestExtensions: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/OpenStructUse:
+  Enabled: false
+
+Metrics/AbcSize:
+  Exclude:
+    - lib/jeckle/api.rb
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+    - "*.gemspec"
+
+Metrics/MethodLength:
+  Exclude:
+    - lib/jeckle/request.rb
+
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - spec/**/*
+
+Lint/MissingSuper:
+  Exclude:
+    - lib/jeckle/http.rb
+
+Style/EmptyClassDefinition:
+  Exclude:
+    - spec/**/*
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/LeakyConstantDeclaration:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/StubbedMock:
+  Enabled: false

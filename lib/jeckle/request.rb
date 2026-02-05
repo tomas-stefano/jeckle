@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jeckle
   class Request
     attr_reader :api, :body, :headers, :method, :params, :response, :endpoint
@@ -6,10 +8,10 @@ module Jeckle
       @api = api
 
       @method  = options.delete(:method) || :get
-      @body    = options.delete(:body) if %w(post put patch).include?(method.to_s)
+      @body    = options.delete(:body) if %w[post put patch].include?(method.to_s)
       @headers = options.delete(:headers)
 
-      if options[:params].nil? && options.size > 0
+      if options[:params].nil? && options.size.positive?
         warn %([DEPRECATION] Sending URL params mixed with options hash is deprecated.
         Instead of doing this:
           run_request 'cars/search', id: id, method: :get
@@ -26,8 +28,8 @@ module Jeckle
       @response = perform_api_request
     end
 
-    def self.run(*args)
-      new *args
+    def self.run(api, endpoint, options = {})
+      new(api, endpoint, options)
     end
 
     private

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jeckle
   class Setup
     # Register APIs, providing all the configurations to it.

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe Jeckle::HTTP do
@@ -9,7 +11,7 @@ RSpec.describe Jeckle::HTTP do
     context 'when resource class is namespaced' do
       before do
         MySuperApi = Module.new
-        MySuperApi::FakeResource = Class.new(::FakeResource)
+        MySuperApi::FakeResource = Class.new(FakeResource)
       end
 
       it 'ignores namespace' do
@@ -33,7 +35,7 @@ RSpec.describe Jeckle::HTTP do
       end
 
       context 'when api_mapping is changed' do
-        it "does not affect the parent" do
+        it 'does not affect the parent' do
           inherited_class.api :another_api
 
           expect(FakeResource.api_mapping).not_to eq inherited_class.api_mapping
@@ -46,7 +48,7 @@ RSpec.describe Jeckle::HTTP do
   describe '.default_api' do
     context 'when defining a registered API via Jeckle::Setup' do
       it 'returns the assigned API' do
-        expect(FakeResource.api :my_super_api).to be_kind_of Jeckle::API
+        expect(FakeResource.api(:my_super_api)).to be_a Jeckle::API
       end
 
       it 'assigns API do api_mapping' do
