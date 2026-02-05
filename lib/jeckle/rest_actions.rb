@@ -3,7 +3,7 @@
 module Jeckle
   module RESTActions
     def self.included(base)
-      base.send :extend, Jeckle::RESTActions::Collection
+      base.extend Jeckle::RESTActions::Collection
     end
 
     module Collection
