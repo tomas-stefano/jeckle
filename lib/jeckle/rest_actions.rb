@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jeckle
   module RESTActions
     def self.included(base)

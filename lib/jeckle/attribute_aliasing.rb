@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jeckle
   module AttributeAliasing
     def attribute(name, coercion, options = {})

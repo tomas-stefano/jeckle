@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jeckle
   class API
     attr_accessor :logger

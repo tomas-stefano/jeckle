@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Jeckle.configure do |config|
   config.register :my_super_api do |api|
     api.base_uri = 'http://my-super-api.com.br'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'jeckle'
 
 # Here is an example using the Dribbble API

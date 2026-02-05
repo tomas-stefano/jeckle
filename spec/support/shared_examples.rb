@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples_for Jeckle::Request do
   let(:api_params) { api.params.stringify_keys }
 

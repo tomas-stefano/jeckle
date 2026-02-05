@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Jeckle
   class Request
     attr_reader :api, :body, :headers, :method, :params, :response, :endpoint
