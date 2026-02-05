@@ -26,8 +26,8 @@ module Jeckle
       @response = perform_api_request
     end
 
-    def self.run(*args)
-      new *args
+    def self.run(api, endpoint, options = {})
+      new(api, endpoint, options)
     end
 
     private

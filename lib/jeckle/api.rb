@@ -10,8 +10,8 @@ module Jeckle
         conn.params = params
         conn.response :logger, logger
 
-        conn.basic_auth basic_auth[:username], basic_auth[:password] if basic_auth
-        conn.instance_exec &@middlewares_block if @middlewares_block
+        conn.request :authorization, :basic, basic_auth[:username], basic_auth[:password] if basic_auth
+        conn.instance_exec(&@middlewares_block) if @middlewares_block
       end
     end
 

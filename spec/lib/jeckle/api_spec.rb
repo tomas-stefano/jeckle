@@ -25,8 +25,8 @@ RSpec.describe Jeckle::API do
       expect(jeckle_api.connection.headers).to include 'Content-Type' => 'application/json'
     end
 
-    it 'assigns basic auth headers' do
-      expect(jeckle_api.connection.headers.keys).to include 'Authorization'
+    it 'assigns basic auth middleware' do
+      expect(jeckle_api.connection.builder.handlers).to include Faraday::Request::Authorization
     end
 
     it 'assigns params there will be used on all requests' do
@@ -41,16 +41,15 @@ RSpec.describe Jeckle::API do
     context 'when middlewares_block is set' do
       before do
         jeckle_api.middlewares do
-          request :retry, max: 2, interval: 0.05
+          request :json
           request :instrumentation
         end
       end
 
       it 'adds middlewares on connection middleware stack' do
-        expect(jeckle_api.connection.builder.handlers.last(2)).to eq [
-          Faraday::Request::Retry,
-          Faraday::Request::Instrumentation
-        ]
+        handlers = jeckle_api.connection.builder.handlers
+        expect(handlers).to include(Faraday::Request::Json)
+        expect(handlers).to include(Faraday::Request::Instrumentation)
       end
     end
   end

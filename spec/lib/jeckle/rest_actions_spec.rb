@@ -30,7 +30,7 @@ RSpec.describe Jeckle::RESTActions do
 
       it 'calls default API connection with GET and search params' do
         expect(Jeckle::Request).to receive(:run)
-          .with(api, 'fake_resources', params: query).and_return(fake_request)
+          .with(api, 'fake_resources', { params: query }).and_return(fake_request)
 
         FakeResource.search query
       end
@@ -77,7 +77,7 @@ RSpec.describe Jeckle::RESTActions do
 
       it 'calls default API connection with GET and search params' do
         expect(Jeckle::Request).to receive(:run)
-          .with(api, endpoint, params: query).and_return(fake_request)
+          .with(api, endpoint, { params: query }).and_return(fake_request)
 
         FakeResource.search query
       end
