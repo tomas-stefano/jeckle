@@ -1,14 +1,34 @@
 # frozen_string_literal: true
 
 module Jeckle
+  # Base error class for all Jeckle errors.
   class Error < StandardError; end
 
+  # Raised when a network connection cannot be established.
   class ConnectionError < Error; end
+
+  # Raised when a request exceeds the configured timeout.
   class TimeoutError < Error; end
 
+  # Base class for HTTP error responses (status >= 400).
+  #
+  # @example
+  #   begin
+  #     Shot.find(999)
+  #   rescue Jeckle::HTTPError => e
+  #     puts e.status #=> 404
+  #     puts e.body   #=> '{"error":"not found"}'
+  #   end
   class HTTPError < Error
-    attr_reader :status, :body
+    # @return [Integer, nil] the HTTP status code
+    attr_reader :status
 
+    # @return [String, nil] the response body
+    attr_reader :body
+
+    # @param message [String, nil] error message
+    # @param status [Integer, nil] HTTP status code
+    # @param body [String, nil] response body
     def initialize(message = nil, status: nil, body: nil)
       @status = status
       @body = body
@@ -16,8 +36,10 @@ module Jeckle
     end
   end
 
+  # Base class for 4xx client errors.
   class ClientError < HTTPError; end
 
+  # HTTP 400 Bad Request.
   class BadRequestError < ClientError
     DEFAULT_STATUS = 400
 
@@ -26,6 +48,7 @@ module Jeckle
     end
   end
 
+  # HTTP 401 Unauthorized.
   class UnauthorizedError < ClientError
     DEFAULT_STATUS = 401
 
@@ -34,6 +57,7 @@ module Jeckle
     end
   end
 
+  # HTTP 403 Forbidden.
   class ForbiddenError < ClientError
     DEFAULT_STATUS = 403
 
@@ -42,6 +66,7 @@ module Jeckle
     end
   end
 
+  # HTTP 404 Not Found.
   class NotFoundError < ClientError
     DEFAULT_STATUS = 404
 
@@ -50,6 +75,7 @@ module Jeckle
     end
   end
 
+  # HTTP 422 Unprocessable Entity.
   class UnprocessableEntityError < ClientError
     DEFAULT_STATUS = 422
 
@@ -58,6 +84,7 @@ module Jeckle
     end
   end
 
+  # HTTP 429 Too Many Requests.
   class TooManyRequestsError < ClientError
     DEFAULT_STATUS = 429
 
@@ -66,8 +93,10 @@ module Jeckle
     end
   end
 
+  # Base class for 5xx server errors.
   class ServerError < HTTPError; end
 
+  # HTTP 500 Internal Server Error.
   class InternalServerError < ServerError
     DEFAULT_STATUS = 500
 
@@ -76,6 +105,7 @@ module Jeckle
     end
   end
 
+  # HTTP 503 Service Unavailable.
   class ServiceUnavailableError < ServerError
     DEFAULT_STATUS = 503
 
@@ -84,10 +114,12 @@ module Jeckle
     end
   end
 
-  # Legacy errors (kept for backwards compatibility)
+  # Jeckle-specific argument error.
   class ArgumentError < ::ArgumentError; end
 
+  # Raised when a referenced API name is not registered.
   class NoSuchAPIError < ArgumentError
+    # @param api [Symbol] the unregistered API name
     def initialize(api)
       message = %(The API name '#{api}' doesn't exist in Jeckle definitions.
 
@@ -101,7 +133,9 @@ module Jeckle
     end
   end
 
+  # Raised when basic_auth is missing username or password.
   class NoUsernameOrPasswordError < ArgumentError
+    # @param _credentials [Hash] the invalid credentials hash
     def initialize(_credentials)
       message = %(No such keys "username" and "password" on `basic_auth` definition"
 

@@ -1,21 +1,22 @@
 # frozen_string_literal: true
 
 module Jeckle
+  # Central registry for API configurations.
+  #
+  # @example
+  #   Jeckle.configure do |config|
+  #     config.register :my_api do |api|
+  #       api.base_uri = 'https://api.example.com'
+  #       api.bearer_token = 'my-token'
+  #     end
+  #   end
   class Setup
-    # Register APIs, providing all the configurations to it.
+    # Register a new API configuration.
     #
-    # @example
-    #
-    #    Jeckle.configure do |config|
-    #      config.register :my_api_restful do |api|
-    #        api.basic_auth = { username: 'chucknorris', password: 'nowThatYouKnowYouMustDie' }
-    #        api.namespaces = { version: 'v2' }
-    #        api.base_uri = 'myapi.com'
-    #        api.headers = { 'Content-Type' => 'application/whatever.complex.header.v2+json;charset=UTF-8' }
-    #        api.logger = Rails.logger # or any other logger
-    #      end
-    #    end
-    #
+    # @param name [Symbol] unique name for this API
+    # @yield [Jeckle::API] the API instance to configure
+    # @return [Jeckle::API] the configured API
+    # @raise [LocalJumpError] if no block is given
     def self.register(name)
       Jeckle::API.new.tap do |user_api|
         yield user_api
@@ -23,6 +24,9 @@ module Jeckle
       end
     end
 
+    # Returns all registered APIs.
+    #
+    # @return [Hash{Symbol => Jeckle::API}]
     def self.registered_apis
       @registered_apis ||= {}
     end

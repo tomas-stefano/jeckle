@@ -2,7 +2,16 @@
 
 module Jeckle
   module Middleware
+    # Faraday response middleware that raises Jeckle errors for HTTP error
+    # status codes (>= 400). Opt-in via `response :jeckle_raise_error`.
+    #
+    # @example
+    #   api.middlewares do
+    #     response :json
+    #     response :jeckle_raise_error
+    #   end
     class RaiseError < Faraday::Middleware
+      # @return [Hash{Integer => Class}] maps HTTP status codes to error classes
       STATUS_MAP = {
         400 => Jeckle::BadRequestError,
         401 => Jeckle::UnauthorizedError,
@@ -14,6 +23,8 @@ module Jeckle
         503 => Jeckle::ServiceUnavailableError
       }.freeze
 
+      # @param env [Faraday::Env] the response environment
+      # @raise [Jeckle::HTTPError] for status >= 400
       def on_complete(env)
         status = env.status
 
