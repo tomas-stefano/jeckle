@@ -21,6 +21,7 @@ module Jeckle
 
     extend Jeckle::HTTP::APIMapping
     extend Jeckle::RESTActions::Collection
+    extend Jeckle::NestedResource
     extend Jeckle::AttributeAliasing
   end
 end

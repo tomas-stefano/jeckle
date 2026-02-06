@@ -2,15 +2,14 @@
 
 module Jeckle
   module Operations
-    # Provides `list` and `list_each` class methods for fetching resource collections.
+    # Provides `list`, `list_each`, and `search` class methods for fetching resource collections.
     #
     # @example
-    #   class Shot < Jeckle::Resource
-    #     extend Jeckle::Operations::List
-    #   end
-    #
     #   Shot.list(name: 'avengers')
     #   Shot.list_each(per_page: 10).each { |s| puts s.name }
+    #
+    # @example Nested resource
+    #   Comment.list(post_id: 123)  # GET /posts/123/comments
     module List
       # Fetch a collection of resources.
       #
@@ -21,9 +20,11 @@ module Jeckle
       # @example
       #   Shot.list(name: 'avengers')
       def list(params = {})
+        params = params.dup if params.is_a?(Hash)
         custom_resource_name = params.delete(:resource_name) if params.is_a?(Hash)
+        endpoint = custom_resource_name || resolve_endpoint(params)
 
-        response   = run_request(custom_resource_name || resource_name, params: params).response.body || []
+        response   = run_request(endpoint, params: params).response.body || []
         collection = response.is_a?(Array) ? response : response[resource_name]
 
         Array(collection).collect { |attrs| new attrs }
@@ -38,7 +39,8 @@ module Jeckle
       # @example
       #   Shot.list_each(per_page: 10).each { |shot| puts shot.name }
       def list_each(per_page: Jeckle::Collection::DEFAULT_PER_PAGE, **params)
-        Jeckle::Collection.new(resource_class: self, per_page: per_page, params: params)
+        endpoint = resolve_endpoint(params)
+        Jeckle::Collection.new(resource_class: self, endpoint: endpoint, per_page: per_page, params: params)
       end
 
       # @deprecated Use {#list} instead.

@@ -5,21 +5,22 @@ module Jeckle
     # Provides `find` class method for fetching a single resource by ID.
     #
     # @example
-    #   class Shot < Jeckle::Resource
-    #     extend Jeckle::Operations::Find
-    #   end
-    #
     #   Shot.find(123)
+    #
+    # @example Nested resource
+    #   Comment.find(456, post_id: 123)  # GET /posts/123/comments/456
     module Find
       # Fetch a single resource by ID.
       #
       # @param id [Integer, String] the resource ID
+      # @param params [Hash] optional params (e.g., parent IDs for nested resources)
       # @return [Jeckle::Resource]
       #
       # @example
       #   Shot.find(1600459)
-      def find(id)
-        endpoint = "#{resource_name}/#{id}"
+      def find(id, params = {})
+        base = resolve_endpoint(params)
+        endpoint = "#{base}/#{id}"
         attributes = run_request(endpoint).response.body
 
         new attributes
