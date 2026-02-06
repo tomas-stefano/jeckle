@@ -35,6 +35,7 @@ Metrics/BlockLength:
 Metrics/ParameterLists:
   Exclude:
     - lib/jeckle/collection.rb
+    - lib/jeckle/testing.rb
 
 Metrics/MethodLength:
   Exclude:
