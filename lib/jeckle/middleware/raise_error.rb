@@ -23,6 +23,9 @@ module Jeckle
         503 => Jeckle::ServiceUnavailableError
       }.freeze
 
+      # Header names checked for request ID (case-insensitive via Faraday headers).
+      REQUEST_ID_HEADERS = %w[X-Request-Id X-Request-ID].freeze
+
       # @param env [Faraday::Env] the response environment
       # @raise [Jeckle::HTTPError] for status >= 400
       def on_complete(env)
@@ -34,7 +37,22 @@ module Jeckle
           status < 500 ? Jeckle::ClientError : Jeckle::ServerError
         end
 
-        raise error_class.new(env.reason_phrase, status: status, body: env.body)
+        request_id = extract_request_id(env.response_headers)
+
+        raise error_class.new(env.reason_phrase, status: status, body: env.body, request_id: request_id)
+      end
+
+      private
+
+      def extract_request_id(headers)
+        return unless headers
+
+        REQUEST_ID_HEADERS.each do |header|
+          value = headers[header]
+          return value if value
+        end
+
+        nil
       end
     end
   end

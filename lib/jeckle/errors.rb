@@ -26,12 +26,17 @@ module Jeckle
     # @return [String, nil] the response body
     attr_reader :body
 
+    # @return [String, nil] the request ID from X-Request-Id response header
+    attr_reader :request_id
+
     # @param message [String, nil] error message
     # @param status [Integer, nil] HTTP status code
     # @param body [String, nil] response body
-    def initialize(message = nil, status: nil, body: nil)
+    # @param request_id [String, nil] request ID from response headers
+    def initialize(message = nil, status: nil, body: nil, request_id: nil)
       @status = status
       @body = body
+      @request_id = request_id
       super(message)
     end
   end
@@ -43,7 +48,7 @@ module Jeckle
   class BadRequestError < ClientError
     DEFAULT_STATUS = 400
 
-    def initialize(message = 'Bad Request', status: DEFAULT_STATUS, body: nil)
+    def initialize(message = 'Bad Request', status: DEFAULT_STATUS, body: nil, request_id: nil)
       super
     end
   end
@@ -52,7 +57,7 @@ module Jeckle
   class UnauthorizedError < ClientError
     DEFAULT_STATUS = 401
 
-    def initialize(message = 'Unauthorized', status: DEFAULT_STATUS, body: nil)
+    def initialize(message = 'Unauthorized', status: DEFAULT_STATUS, body: nil, request_id: nil)
       super
     end
   end
@@ -61,7 +66,7 @@ module Jeckle
   class ForbiddenError < ClientError
     DEFAULT_STATUS = 403
 
-    def initialize(message = 'Forbidden', status: DEFAULT_STATUS, body: nil)
+    def initialize(message = 'Forbidden', status: DEFAULT_STATUS, body: nil, request_id: nil)
       super
     end
   end
@@ -70,7 +75,7 @@ module Jeckle
   class NotFoundError < ClientError
     DEFAULT_STATUS = 404
 
-    def initialize(message = 'Not Found', status: DEFAULT_STATUS, body: nil)
+    def initialize(message = 'Not Found', status: DEFAULT_STATUS, body: nil, request_id: nil)
       super
     end
   end
@@ -79,7 +84,7 @@ module Jeckle
   class UnprocessableEntityError < ClientError
     DEFAULT_STATUS = 422
 
-    def initialize(message = 'Unprocessable Entity', status: DEFAULT_STATUS, body: nil)
+    def initialize(message = 'Unprocessable Entity', status: DEFAULT_STATUS, body: nil, request_id: nil)
       super
     end
   end
@@ -88,7 +93,7 @@ module Jeckle
   class TooManyRequestsError < ClientError
     DEFAULT_STATUS = 429
 
-    def initialize(message = 'Too Many Requests', status: DEFAULT_STATUS, body: nil)
+    def initialize(message = 'Too Many Requests', status: DEFAULT_STATUS, body: nil, request_id: nil)
       super
     end
   end
@@ -100,7 +105,7 @@ module Jeckle
   class InternalServerError < ServerError
     DEFAULT_STATUS = 500
 
-    def initialize(message = 'Internal Server Error', status: DEFAULT_STATUS, body: nil)
+    def initialize(message = 'Internal Server Error', status: DEFAULT_STATUS, body: nil, request_id: nil)
       super
     end
   end
@@ -109,7 +114,7 @@ module Jeckle
   class ServiceUnavailableError < ServerError
     DEFAULT_STATUS = 503
 
-    def initialize(message = 'Service Unavailable', status: DEFAULT_STATUS, body: nil)
+    def initialize(message = 'Service Unavailable', status: DEFAULT_STATUS, body: nil, request_id: nil)
       super
     end
   end

@@ -26,17 +26,19 @@ RSpec.describe 'Jeckle error hierarchy' do
       expect(described_class).to be < Jeckle::Error
     end
 
-    it 'exposes status and body' do
-      error = described_class.new('fail', status: 418, body: 'teapot')
+    it 'exposes status, body, and request_id' do
+      error = described_class.new('fail', status: 418, body: 'teapot', request_id: 'req-123')
       expect(error.status).to eq 418
       expect(error.body).to eq 'teapot'
+      expect(error.request_id).to eq 'req-123'
       expect(error.message).to eq 'fail'
     end
 
-    it 'defaults status and body to nil' do
+    it 'defaults status, body, and request_id to nil' do
       error = described_class.new
       expect(error.status).to be_nil
       expect(error.body).to be_nil
+      expect(error.request_id).to be_nil
     end
   end
 
