@@ -28,28 +28,98 @@ And then execute:
 $ bundle
 ```
 
-## Usage
-
-### Configuring an API
-
-Let's say you'd like to connect your app to Dribbble.com - a community of designers sharing screenshots of their work, process, and projects.
-
-First, you would need to configure the API:
+## Quick Start
 
 ```ruby
+# 1. Configure the API
 Jeckle.configure do |config|
   config.register :dribbble do |api|
     api.base_uri = 'http://api.dribbble.com'
+    api.bearer_token = ENV['DRIBBBLE_TOKEN']
     api.middlewares do
       response :json
+      response :jeckle_raise_error
     end
+  end
+end
+
+# 2. Define a resource
+class Shot < Jeckle::Resource
+  api :dribbble
+
+  attribute :id, Jeckle::Types::Integer
+  attribute :name, Jeckle::Types::String
+  attribute :url, Jeckle::Types::String
+end
+
+# 3. Use it
+shot = Shot.find(1600459)
+shots = Shot.list(name: 'avengers')
+```
+
+## API Configuration
+
+### Basic Auth
+
+```ruby
+Jeckle.configure do |config|
+  config.register :my_api do |api|
+    api.base_uri = 'https://api.example.com'
+    api.basic_auth = { username: 'user', password: 'pass' }
   end
 end
 ```
 
-### Mapping resources
+### Bearer Token
 
-Following the previous example, Dribbble.com consists of pieces of web designers work called "Shots". Each shot has the attributes `id`, `name`, `url` and `image_url`. A Jeckle resource representing Dribbble's shots would be something like this:
+```ruby
+config.register :my_api do |api|
+  api.base_uri = 'https://api.example.com'
+  api.bearer_token = 'my-oauth-token'
+end
+```
+
+### API Key (Header)
+
+```ruby
+config.register :my_api do |api|
+  api.base_uri = 'https://api.example.com'
+  api.api_key = { value: 'secret', header: 'X-Api-Key' }
+end
+```
+
+### API Key (Query Param)
+
+```ruby
+config.register :my_api do |api|
+  api.base_uri = 'https://api.example.com'
+  api.api_key = { value: 'secret', param: 'api_key' }
+end
+```
+
+### Other Options
+
+```ruby
+config.register :my_api do |api|
+  api.base_uri = 'https://api.example.com'
+  api.namespaces = { prefix: 'api', version: 'v2' }
+  api.headers = { 'Content-Type' => 'application/json' }
+  api.params = { locale: 'en' }
+  api.open_timeout = 2
+  api.read_timeout = 5
+  api.logger = Rails.logger
+
+  api.middlewares do
+    request :json
+    response :json
+    response :jeckle_raise_error
+  end
+end
+```
+
+## Defining Resources
+
+Resources inherit from `Jeckle::Resource` and use `Jeckle::Types` for attribute definitions:
 
 ```ruby
 class Shot < Jeckle::Resource
@@ -58,101 +128,114 @@ class Shot < Jeckle::Resource
   attribute :id, Jeckle::Types::Integer
   attribute :name, Jeckle::Types::String
   attribute :url, Jeckle::Types::String
-  attribute :image_url, Jeckle::Types::String
+  attribute :score, Jeckle::Types::Float
 end
 ```
 
-### Fetching data
+Available types: `Jeckle::Types::Integer`, `String`, `Float`, `Bool`, `Array`, `Hash`, and any [dry-types](https://dry-rb.org/gems/dry-types/) type.
 
-The resource class allows us to list shots through HTTP requests to the API, based on the provided information. For example, we can find a specific shot by providing its id to the `find` method:
+## CRUD Operations
+
+### Find
 
 ```ruby
-# GET http://api.dribbble.com/shots/1600459
-shot = Shot.find 1600459
+# GET /shots/1600459
+shot = Shot.find(1600459)
+shot.name #=> "Daryl Heckle And Jeckle Oates"
 ```
 
-That will return a `Shot` instance, containing the shot info:
+### List
 
 ```ruby
-shot.id
-=> 1600459
-
-shot.name
-=> "Daryl Heckle And Jeckle Oates"
-
-shot.image_url
-=> "https://d13yacurqjgara.cloudfront.net/users/85699/screenshots/1600459/daryl_heckle_and_jeckle_oates-dribble.jpg"
+# GET /shots?name=avengers
+shots = Shot.list(name: 'avengers')
 ```
 
-You can also look for many shots matching one or more attributes, by using the `list` method:
+### Create
 
 ```ruby
-# GET http://api.dribbble.com/shots?name=avengers
-shots = Shot.list name: 'avengers'
+# POST /shots
+shot = Shot.create(name: 'New Shot', url: 'http://example.com')
 ```
 
-### Attribute Aliasing
-
-Sometimes you want to call the API's attributes something else, either because their names aren't very concise or because they're out of you app's convention. If that's the case, you can add an `as` option:
+### Update
 
 ```ruby
-attribute :thumbnailSize, Jeckle::Types::String, as: :thumbnail_size
+# PATCH /shots/123
+shot = Shot.update(123, name: 'Updated Name')
 ```
 
-Both mapping will work:
+### Destroy
 
 ```ruby
-shot.thumbnailSize
-=> "50x50"
-
-shot.thumbnail_size
-=> "50x50"
+# DELETE /shots/123
+Shot.destroy(123) #=> true
 ```
 
-### Error Handling
+## Attribute Aliasing
 
-Jeckle provides a built-in Faraday middleware that automatically raises typed errors for HTTP error responses. Enable it in your API configuration:
+Map API attribute names to Ruby-friendly names:
 
 ```ruby
-Jeckle.configure do |config|
-  config.register :dribbble do |api|
-    api.base_uri = 'http://api.dribbble.com'
-    api.middlewares do
-      response :json
-      response :jeckle_raise_error
-    end
-  end
+class Shot < Jeckle::Resource
+  api :dribbble
+  attribute :thumbnailSize, Jeckle::Types::String, as: :thumbnail_size
+end
+
+shot.thumbnailSize  #=> "50x50"
+shot.thumbnail_size #=> "50x50"
+```
+
+## Error Handling
+
+Enable the error middleware to get typed exceptions:
+
+```ruby
+api.middlewares do
+  response :json
+  response :jeckle_raise_error
 end
 ```
 
-Then rescue specific errors in your code:
+Then rescue specific errors:
 
 ```ruby
 begin
-  Shot.find 999
+  Shot.find(999)
 rescue Jeckle::NotFoundError => e
   puts "Not found: #{e.message} (status: #{e.status})"
 rescue Jeckle::ClientError => e
   puts "Client error: #{e.status}"
 rescue Jeckle::ServerError => e
   puts "Server error: #{e.status}"
-rescue Jeckle::HTTPError => e
-  puts "HTTP error: #{e.status}"
 end
 ```
 
-The error hierarchy:
+Error hierarchy:
 
 - `Jeckle::Error` — base error
-  - `Jeckle::ConnectionError` — network connectivity errors
-  - `Jeckle::TimeoutError` — request timeout errors
-  - `Jeckle::HTTPError` — HTTP errors (has `status` and `body` attributes)
-    - `Jeckle::ClientError` — 4xx errors
+  - `Jeckle::ConnectionError` — network errors
+  - `Jeckle::TimeoutError` — timeout errors
+  - `Jeckle::HTTPError` — HTTP errors (`status`, `body`)
+    - `Jeckle::ClientError` — 4xx
       - `BadRequestError` (400), `UnauthorizedError` (401), `ForbiddenError` (403), `NotFoundError` (404), `UnprocessableEntityError` (422), `TooManyRequestsError` (429)
-    - `Jeckle::ServerError` — 5xx errors
+    - `Jeckle::ServerError` — 5xx
       - `InternalServerError` (500), `ServiceUnavailableError` (503)
 
-We're all set! Now we can expand the mapping of our API, e.g to add ability to search Dribbble Designer directory by adding Designer class, or we can expand the original mapping of Shot class to include more attributes, such as tags or comments.
+## Pagination
+
+Use `list_each` for lazy, offset-based pagination:
+
+```ruby
+# Fetches pages on demand, 25 items per page by default
+Shot.list_each(per_page: 10).each do |shot|
+  puts shot.name
+end
+
+# Works with Enumerable methods
+Shot.list_each(per_page: 50).first(5)
+Shot.list_each(per_page: 50, status: 'active').select { |s| s.score > 90 }
+```
 
 ## Migration from 0.4.x
 
@@ -167,7 +250,7 @@ class Shot
   attribute :id, Integer
 end
 
-# After (0.6.0+)
+# After (1.0.0)
 class Shot < Jeckle::Resource
   attribute :id, Jeckle::Types::Integer
 end
