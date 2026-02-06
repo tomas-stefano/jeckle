@@ -52,6 +52,7 @@ module Jeckle
         end
 
         conn.instance_exec(&@middlewares_block) if @middlewares_block
+        @connection_customizer&.call(conn)
       end
     end
 
@@ -183,6 +184,21 @@ module Jeckle
       raise Jeckle::ArgumentError, 'A block is required when configuring API middlewares' unless block_given?
 
       @middlewares_block = block
+    end
+
+    # Customize the Faraday connection after Jeckle's defaults are applied.
+    # The block receives the Faraday connection and can add middleware,
+    # override the adapter, etc.
+    #
+    # @yield [Faraday::Connection] the connection after default setup
+    #
+    # @example
+    #   api.configure_connection do |conn|
+    #     conn.use MyCustomMiddleware
+    #     conn.adapter :typhoeus
+    #   end
+    def configure_connection(&block)
+      @connection_customizer = block
     end
 
     # Returns timeout configuration hash for Faraday.

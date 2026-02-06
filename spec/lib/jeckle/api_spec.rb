@@ -265,6 +265,29 @@ RSpec.describe Jeckle::API do
     end
   end
 
+  describe '#configure_connection' do
+    subject(:jeckle_api) { described_class.new }
+
+    before { jeckle_api.base_uri = 'http://example.com' }
+
+    it 'calls the customizer block with the connection' do
+      called_with = nil
+      jeckle_api.configure_connection { |conn| called_with = conn }
+
+      connection = jeckle_api.connection
+      expect(called_with).to eq connection
+    end
+
+    it 'runs after middlewares block' do
+      order = []
+      jeckle_api.middlewares { order << :middlewares }
+      jeckle_api.configure_connection { |_conn| order << :customizer }
+
+      jeckle_api.connection
+      expect(order).to eq %i[middlewares customizer]
+    end
+  end
+
   describe '#timeout' do
     let(:timeout) { nil }
     let(:open_timeout) { nil }

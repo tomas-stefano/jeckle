@@ -16,6 +16,7 @@ Style/OpenStructUse:
 Metrics/AbcSize:
   Exclude:
     - lib/jeckle/api.rb
+    - lib/jeckle/request.rb
 
 Metrics/CyclomaticComplexity:
   Exclude:
