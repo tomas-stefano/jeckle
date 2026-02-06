@@ -205,6 +205,31 @@ RSpec.describe Jeckle::API do
     end
   end
 
+  describe '#pagination' do
+    subject(:jeckle_api) { described_class.new }
+
+    it 'creates an Offset strategy from symbol' do
+      jeckle_api.pagination :offset, page_param: :p
+      expect(jeckle_api.pagination_strategy).to be_a Jeckle::Pagination::Offset
+    end
+
+    it 'creates a Cursor strategy from symbol' do
+      jeckle_api.pagination :cursor, cursor_param: :starting_after
+      expect(jeckle_api.pagination_strategy).to be_a Jeckle::Pagination::Cursor
+    end
+
+    it 'creates a LinkHeader strategy from symbol' do
+      jeckle_api.pagination :link_header
+      expect(jeckle_api.pagination_strategy).to be_a Jeckle::Pagination::LinkHeader
+    end
+
+    it 'accepts a custom strategy instance' do
+      custom = Object.new
+      jeckle_api.pagination custom
+      expect(jeckle_api.pagination_strategy).to eq custom
+    end
+  end
+
   describe '#retry=' do
     subject(:jeckle_api) { described_class.new }
 

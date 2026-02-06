@@ -40,7 +40,11 @@ module Jeckle
       #   Shot.list_each(per_page: 10).each { |shot| puts shot.name }
       def list_each(per_page: Jeckle::Collection::DEFAULT_PER_PAGE, **params)
         endpoint = resolve_endpoint(params)
-        Jeckle::Collection.new(resource_class: self, endpoint: endpoint, per_page: per_page, params: params)
+        strategy = api_mapping[:default_api]&.pagination_strategy
+        Jeckle::Collection.new(
+          resource_class: self, endpoint: endpoint, per_page: per_page,
+          params: params, strategy: strategy
+        )
       end
 
       # @deprecated Use {#list} instead.

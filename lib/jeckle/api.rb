@@ -26,7 +26,9 @@ module Jeckle
     # @return [String, nil] bearer token for Authorization header
     # @return [Hash, nil] API key configuration
     # @return [Hash, nil] retry configuration for faraday-retry
-    attr_reader :basic_auth, :request_timeout, :bearer_token, :api_key, :retry_options
+    # @return [#paginate, #next_context, nil] pagination strategy for collections
+    attr_reader :basic_auth, :request_timeout, :bearer_token, :api_key, :retry_options,
+                :pagination_strategy
 
     # Returns or builds a configured Faraday connection.
     #
@@ -141,6 +143,29 @@ module Jeckle
     # @return [Hash] URL namespace segments
     def namespaces
       @namespaces || {}
+    end
+
+    # Configure the pagination strategy for this API.
+    #
+    # @param strategy [Symbol, #paginate] :offset, :cursor, :link_header, or a strategy instance
+    # @param options [Hash] options passed to the built-in strategy constructor
+    # @return [#paginate, #next_context]
+    #
+    # @example Cursor-based pagination (Stripe-style)
+    #   api.pagination :cursor, cursor_param: :starting_after, limit_param: :limit
+    #
+    # @example Link header pagination (GitHub-style)
+    #   api.pagination :link_header
+    #
+    # @example Custom strategy instance
+    #   api.pagination MyCustomStrategy.new
+    def pagination(strategy, **options)
+      @pagination_strategy = case strategy
+                             when :offset then Jeckle::Pagination::Offset.new(**options)
+                             when :cursor then Jeckle::Pagination::Cursor.new(**options)
+                             when :link_header then Jeckle::Pagination::LinkHeader.new(**options)
+                             else strategy
+                             end
     end
 
     # Configure Faraday middlewares for this API.
