@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'monitor'
+
 module Jeckle
-  # Central registry for API configurations.
+  # Central registry for API configurations. Thread-safe via Monitor.
   #
   # @example
   #   Jeckle.configure do |config|
@@ -11,6 +13,8 @@ module Jeckle
   #     end
   #   end
   class Setup
+    @monitor = Monitor.new
+
     # Register a new API configuration.
     #
     # @param name [Symbol] unique name for this API
@@ -20,7 +24,7 @@ module Jeckle
     def self.register(name)
       Jeckle::API.new.tap do |user_api|
         yield user_api
-        registered_apis[name] = user_api
+        @monitor.synchronize { registered_apis[name] = user_api }
       end
     end
 
@@ -29,6 +33,13 @@ module Jeckle
     # @return [Hash{Symbol => Jeckle::API}]
     def self.registered_apis
       @registered_apis ||= {}
+    end
+
+    # Reset all registered APIs. Useful for testing.
+    #
+    # @return [void]
+    def self.reset!
+      @monitor.synchronize { @registered_apis = {} }
     end
   end
 end
