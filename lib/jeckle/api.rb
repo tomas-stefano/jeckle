@@ -27,8 +27,9 @@ module Jeckle
     # @return [Hash, nil] API key configuration
     # @return [Hash, nil] retry configuration for faraday-retry
     # @return [#paginate, #next_context, nil] pagination strategy for collections
+    # @return [Jeckle::Auth::OAuth2, nil] OAuth 2.0 configuration
     attr_reader :basic_auth, :request_timeout, :bearer_token, :api_key, :retry_options,
-                :pagination_strategy
+                :pagination_strategy, :oauth2
 
     # Returns or builds a configured Faraday connection.
     #
@@ -41,6 +42,7 @@ module Jeckle
 
         conn.request :authorization, :basic, basic_auth[:username], basic_auth[:password] if basic_auth
         conn.request :authorization, :Bearer, bearer_token if bearer_token
+        conn.request :authorization, :Bearer, -> { oauth2.token } if oauth2
         conn.request :retry, retry_options if retry_options
 
         if api_key
@@ -144,6 +146,26 @@ module Jeckle
     # @return [Hash] URL namespace segments
     def namespaces
       @namespaces || {}
+    end
+
+    # Set OAuth 2.0 client credentials authentication. Resets cached connection.
+    # The token is fetched lazily on the first request.
+    #
+    # @param config [Hash] OAuth 2.0 configuration
+    # @option config [String] :client_id OAuth client ID
+    # @option config [String] :client_secret OAuth client secret
+    # @option config [String] :token_url token endpoint URL
+    # @option config [String] :scope (nil) requested scope
+    # @return [Jeckle::Auth::OAuth2]
+    #
+    # @example
+    #   api.oauth2 = {
+    #     client_id: 'id', client_secret: 'secret',
+    #     token_url: 'https://auth.example.com/oauth/token'
+    #   }
+    def oauth2=(config)
+      @connection = nil
+      @oauth2 = Jeckle::Auth::OAuth2.new(**config)
     end
 
     # Configure the pagination strategy for this API.
