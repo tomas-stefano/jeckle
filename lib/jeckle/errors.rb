@@ -93,8 +93,13 @@ module Jeckle
   class TooManyRequestsError < ClientError
     DEFAULT_STATUS = 429
 
-    def initialize(message = 'Too Many Requests', status: DEFAULT_STATUS, body: nil, request_id: nil)
-      super
+    # @return [Jeckle::RateLimit, nil] rate limit information from response headers
+    attr_reader :rate_limit
+
+    def initialize(message = 'Too Many Requests', status: DEFAULT_STATUS, body: nil, request_id: nil,
+                   rate_limit: nil)
+      @rate_limit = rate_limit
+      super(message, status: status, body: body, request_id: request_id)
     end
   end
 

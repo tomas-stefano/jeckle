@@ -39,7 +39,13 @@ module Jeckle
 
         request_id = extract_request_id(env.response_headers)
 
-        raise error_class.new(env.reason_phrase, status: status, body: env.body, request_id: request_id)
+        error_kwargs = { status: status, body: env.body, request_id: request_id }
+
+        if error_class == Jeckle::TooManyRequestsError
+          error_kwargs[:rate_limit] = Jeckle::RateLimit.from_headers(env.response_headers)
+        end
+
+        raise error_class.new(env.reason_phrase, **error_kwargs)
       end
 
       private

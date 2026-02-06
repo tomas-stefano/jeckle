@@ -39,6 +39,7 @@ Metrics/MethodLength:
     - lib/jeckle/api.rb
     - lib/jeckle/request.rb
     - lib/jeckle/attribute_aliasing.rb
+    - lib/jeckle/middleware/raise_error.rb
 
 Naming/PredicateMethod:
   AllowedMethods:

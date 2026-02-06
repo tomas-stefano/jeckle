@@ -53,6 +53,26 @@ RSpec.describe Jeckle::Middleware::RaiseError do
       end
     end
 
+    context 'when status is 429 with rate limit headers' do
+      let(:status) { 429 }
+      let(:reason_phrase) { 'Too Many Requests' }
+      let(:response_headers) do
+        {
+          'X-RateLimit-Limit' => '5000',
+          'X-RateLimit-Remaining' => '0',
+          'X-RateLimit-Reset' => '1704067200'
+        }
+      end
+
+      it 'includes rate_limit in the error' do
+        expect { middleware.on_complete(env) }.to raise_error(Jeckle::TooManyRequestsError) do |error|
+          expect(error.rate_limit).to be_a(Jeckle::RateLimit)
+          expect(error.rate_limit.remaining).to eq 0
+          expect(error.rate_limit.limit).to eq 5000
+        end
+      end
+    end
+
     context 'when status is an unmapped 4xx' do
       let(:status) { 418 }
       let(:reason_phrase) { "I'm a teapot" }
