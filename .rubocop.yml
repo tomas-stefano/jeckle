@@ -17,6 +17,7 @@ Metrics/AbcSize:
   Exclude:
     - lib/jeckle/api.rb
     - lib/jeckle/request.rb
+    - lib/jeckle/client.rb
 
 Metrics/CyclomaticComplexity:
   Exclude:
