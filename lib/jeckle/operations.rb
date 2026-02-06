@@ -5,6 +5,7 @@ require 'jeckle/operations/list'
 require 'jeckle/operations/create'
 require 'jeckle/operations/update'
 require 'jeckle/operations/delete'
+require 'jeckle/operations/instance'
 
 module Jeckle
   # Composable operation modules that can be individually extended onto

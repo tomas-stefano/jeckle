@@ -17,6 +17,7 @@ module Jeckle
   #   Shot.create(name: 'New Shot')
   class Resource < Jeckle::Model
     include ActiveModel::Naming
+    include Jeckle::Operations::Instance
 
     extend Jeckle::HTTP::APIMapping
     extend Jeckle::RESTActions::Collection
