@@ -9,7 +9,7 @@ require 'faraday/retry'
 require 'jeckle/version'
 
 %w[
-  types setup api model request http collection operations rest_actions
+  types setup api model request http pagination collection operations rest_actions
   nested_resource attribute_aliasing resource errors middleware/raise_error
 ].each do |file_name|
   require "jeckle/#{file_name}"
