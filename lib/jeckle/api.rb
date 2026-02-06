@@ -25,7 +25,8 @@ module Jeckle
     # @return [Integer, nil] request timeout
     # @return [String, nil] bearer token for Authorization header
     # @return [Hash, nil] API key configuration
-    attr_reader :basic_auth, :request_timeout, :bearer_token, :api_key
+    # @return [Hash, nil] retry configuration for faraday-retry
+    attr_reader :basic_auth, :request_timeout, :bearer_token, :api_key, :retry_options
 
     # Returns or builds a configured Faraday connection.
     #
@@ -38,6 +39,7 @@ module Jeckle
 
         conn.request :authorization, :basic, basic_auth[:username], basic_auth[:password] if basic_auth
         conn.request :authorization, :Bearer, bearer_token if bearer_token
+        conn.request :retry, retry_options if retry_options
 
         if api_key
           if api_key[:header]
@@ -72,6 +74,32 @@ module Jeckle
       @connection = nil
       @bearer_token = token
     end
+
+    # Configure automatic retries using faraday-retry. Resets cached connection.
+    #
+    # @param options [Hash] retry options passed to Faraday::Retry::Middleware
+    # @option options [Integer] :max (2) maximum number of retries
+    # @option options [Float] :interval (0.5) initial interval between retries in seconds
+    # @option options [Float] :interval_randomness (0.5) randomness factor for retry interval
+    # @option options [Integer] :backoff_factor (2) exponential backoff multiplier
+    # @option options [Array<Integer>] :retry_statuses ([429, 500, 502, 503]) HTTP status codes to retry
+    # @return [Hash]
+    #
+    # @example
+    #   api.retry = { max: 3, interval: 1, retry_statuses: [429, 503] }
+    def retry=(options)
+      @connection = nil
+      @retry_options = DEFAULT_RETRY_OPTIONS.merge(options)
+    end
+
+    # Default retry configuration.
+    DEFAULT_RETRY_OPTIONS = {
+      max: 2,
+      interval: 0.5,
+      interval_randomness: 0.5,
+      backoff_factor: 2,
+      retry_statuses: [429, 500, 502, 503]
+    }.freeze
 
     # Set API key authentication. Resets cached connection.
     #

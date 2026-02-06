@@ -4,6 +4,7 @@ require 'active_model'
 require 'dry-struct'
 require 'dry/types'
 require 'faraday'
+require 'faraday/retry'
 
 require 'jeckle/version'
 

@@ -205,6 +205,41 @@ RSpec.describe Jeckle::API do
     end
   end
 
+  describe '#retry=' do
+    subject(:jeckle_api) { described_class.new }
+
+    before { jeckle_api.base_uri = 'http://example.com' }
+
+    it 'assigns retry options merged with defaults' do
+      jeckle_api.retry = { max: 5 }
+
+      expect(jeckle_api.retry_options).to include(
+        max: 5,
+        interval: 0.5,
+        interval_randomness: 0.5,
+        backoff_factor: 2,
+        retry_statuses: [429, 500, 502, 503]
+      )
+    end
+
+    it 'allows overriding all defaults' do
+      jeckle_api.retry = { max: 3, interval: 1, retry_statuses: [503] }
+
+      expect(jeckle_api.retry_options).to include(max: 3, interval: 1, retry_statuses: [503])
+    end
+
+    it 'resets the cached connection' do
+      jeckle_api.connection
+      jeckle_api.retry = { max: 3 }
+      expect(jeckle_api.connection.builder.handlers).to include Faraday::Retry::Middleware
+    end
+
+    it 'adds retry middleware to connection' do
+      jeckle_api.retry = { max: 2 }
+      expect(jeckle_api.connection.builder.handlers).to include Faraday::Retry::Middleware
+    end
+  end
+
   describe '#timeout' do
     let(:timeout) { nil }
     let(:open_timeout) { nil }
