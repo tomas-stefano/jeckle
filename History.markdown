@@ -1,3 +1,13 @@
+## v.1.0.0
+
+* Add CRUD operations: `create`, `update`, `destroy`
+* Add `bearer_token` authentication
+* Add `api_key` authentication (header-based or query param-based)
+* Add `Jeckle::Collection` with lazy offset-based pagination
+* Add `list_each` method for paginated enumeration
+* Add `yard` for API documentation generation
+* Add YARD documentation to all public classes and methods
+
 ## v.0.6.0
 
 * **BREAKING:** Replace Virtus with dry-struct (`~> 1.0`) and dry-types (`~> 1.0`)
