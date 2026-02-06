@@ -18,6 +18,7 @@ module Jeckle
   class Resource < Jeckle::Model
     include ActiveModel::Naming
     include Jeckle::Operations::Instance
+    include Jeckle::ResponseInspector
 
     extend Jeckle::HTTP::APIMapping
     extend Jeckle::RESTActions::Collection

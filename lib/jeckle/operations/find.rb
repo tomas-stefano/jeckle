@@ -21,9 +21,10 @@ module Jeckle
       def find(id, params = {})
         base = resolve_endpoint(params)
         endpoint = "#{base}/#{id}"
-        attributes = run_request(endpoint).response.body
-
-        new attributes
+        request = run_request(endpoint)
+        resource = new(request.response.body)
+        resource._response = request.response if resource.respond_to?(:_response=)
+        resource
       end
     end
   end
