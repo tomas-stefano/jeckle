@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-class FakeResource
-  include Jeckle::Resource
-
+class FakeResource < Jeckle::Resource
   api :my_super_api
 
-  attribute :id, Integer
+  attribute :id, Jeckle::Types::Integer
 end

@@ -1,15 +1,11 @@
 # frozen_string_literal: true
 
 module Jeckle
-  module Resource
-    def self.included(base)
-      base.include ActiveModel::Naming
+  class Resource < Jeckle::Model
+    include ActiveModel::Naming
 
-      base.include Jeckle::Model
-      base.include Jeckle::HTTP
-      base.include Jeckle::RESTActions
-
-      base.extend Jeckle::AttributeAliasing
-    end
+    extend Jeckle::HTTP::APIMapping
+    extend Jeckle::RESTActions::Collection
+    extend Jeckle::AttributeAliasing
   end
 end

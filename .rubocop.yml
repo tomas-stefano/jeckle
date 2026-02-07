@@ -25,6 +25,7 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Exclude:
     - lib/jeckle/request.rb
+    - lib/jeckle/attribute_aliasing.rb
 
 Gemspec/DevelopmentDependencies:
   Enabled: false
@@ -32,10 +33,6 @@ Gemspec/DevelopmentDependencies:
 Lint/ConstantDefinitionInBlock:
   Exclude:
     - spec/**/*
-
-Lint/MissingSuper:
-  Exclude:
-    - lib/jeckle/http.rb
 
 Style/EmptyClassDefinition:
   Exclude:

@@ -1,3 +1,12 @@
+## v.0.6.0
+
+* **BREAKING:** Replace Virtus with dry-struct (`~> 1.0`) and dry-types (`~> 1.0`)
+* **BREAKING:** `Jeckle::Model` is now a class (inherits `Dry::Struct`) instead of a module
+* **BREAKING:** `Jeckle::Resource` is now a class (inherits `Jeckle::Model`) instead of a module
+* **BREAKING:** Rename `search` to `list` (`search` still works with deprecation warning)
+* Add `Jeckle::Types` module for dry-types integration
+* Use `Jeckle::Types::Integer`, `Jeckle::Types::String`, etc. for attribute types
+
 ## v.0.5.0
 
 * Add HTTP error class hierarchy (`Jeckle::Error`, `HTTPError`, `ClientError`, `ServerError`)

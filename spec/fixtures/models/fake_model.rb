@@ -1,5 +1,4 @@
 # frozen_string_literal: true
 
-class FakeModel
-  include Jeckle::Model
+class FakeModel < Jeckle::Model
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
+require 'ostruct'
 require 'jeckle'
 
 Dir['spec/support/**/*.rb'].each { |file| require File.expand_path(file) }

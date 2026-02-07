@@ -21,8 +21,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activemodel', '>= 6.0'
+  spec.add_dependency 'dry-struct', '~> 1.0'
+  spec.add_dependency 'dry-types', '~> 1.0'
   spec.add_dependency 'faraday', '~> 2.0'
-  spec.add_dependency 'virtus'
 
   spec.add_development_dependency 'bundler', '>= 2.0'
   spec.add_development_dependency 'pry-byebug'

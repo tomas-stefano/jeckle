@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
 module Jeckle
-  VERSION = '0.6.0'
+  module Types
+    include Dry.Types()
+  end
 end
