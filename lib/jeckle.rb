@@ -6,7 +6,10 @@ require 'virtus'
 
 require 'jeckle/version'
 
-%w[setup api model request http rest_actions resource errors attribute_aliasing].each do |file_name|
+%w[
+  setup api model request http rest_actions resource errors attribute_aliasing
+  middleware/raise_error
+].each do |file_name|
   require "jeckle/#{file_name}"
 end
 

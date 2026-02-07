@@ -62,5 +62,12 @@ RSpec/MultipleExpectations:
 RSpec/NestedGroups:
   Enabled: false
 
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
 RSpec/StubbedMock:
   Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/lib/jeckle/errors_spec.rb

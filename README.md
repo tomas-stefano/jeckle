@@ -113,6 +113,49 @@ shot.thumbnail_size
 
 We're all set! Now we can expand the mapping of our API, e.g to add ability to search Dribbble Designer directory by adding Designer class, or we can expand the original mapping of Shot class to include more attributes, such as tags or comments.
 
+### Error Handling
+
+Jeckle provides a built-in Faraday middleware that automatically raises typed errors for HTTP error responses. Enable it in your API configuration:
+
+```ruby
+Jeckle.configure do |config|
+  config.register :dribbble do |api|
+    api.base_uri = 'http://api.dribbble.com'
+    api.middlewares do
+      response :json
+      response :jeckle_raise_error
+    end
+  end
+end
+```
+
+Then rescue specific errors in your code:
+
+```ruby
+begin
+  Shot.find 999
+rescue Jeckle::NotFoundError => e
+  puts "Not found: #{e.message} (status: #{e.status})"
+rescue Jeckle::ClientError => e
+  puts "Client error: #{e.status}"
+rescue Jeckle::ServerError => e
+  puts "Server error: #{e.status}"
+rescue Jeckle::HTTPError => e
+  puts "HTTP error: #{e.status}"
+end
+```
+
+The error hierarchy:
+
+- `Jeckle::Error` — base error
+  - `Jeckle::ConnectionError` — network connectivity errors
+  - `Jeckle::TimeoutError` — request timeout errors
+  - `Jeckle::HTTPError` — HTTP errors (has `status` and `body` attributes)
+    - `Jeckle::ClientError` — 4xx errors
+      - `BadRequestError` (400), `UnauthorizedError` (401), `ForbiddenError` (403), `NotFoundError` (404), `UnprocessableEntityError` (422), `TooManyRequestsError` (429)
+    - `Jeckle::ServerError` — 5xx errors
+      - `InternalServerError` (500), `ServiceUnavailableError` (503)
+
 ## Examples
 
 You can see more examples here: [https://github.com/tomas-stefano/jeckle/tree/master/examples](https://github.com/tomas-stefano/jeckle/tree/master/examples)
