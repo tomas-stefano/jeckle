@@ -5,9 +5,13 @@ require 'spec_helper'
 RSpec.describe Jeckle::Middleware::RaiseError do
   let(:app) { ->(env) { Faraday::Response.new(env) } }
   let(:middleware) { described_class.new(app) }
-  let(:env) { Faraday::Env.from(status: status, body: body, reason_phrase: reason_phrase) }
+  let(:env) do
+    Faraday::Env.from(status: status, body: body, reason_phrase: reason_phrase,
+                      response_headers: response_headers)
+  end
   let(:body) { '{"error":"something"}' }
   let(:reason_phrase) { nil }
+  let(:response_headers) { {} }
 
   describe '#on_complete' do
     context 'when status is 2xx' do
@@ -49,6 +53,26 @@ RSpec.describe Jeckle::Middleware::RaiseError do
       end
     end
 
+    context 'when status is 429 with rate limit headers' do
+      let(:status) { 429 }
+      let(:reason_phrase) { 'Too Many Requests' }
+      let(:response_headers) do
+        {
+          'X-RateLimit-Limit' => '5000',
+          'X-RateLimit-Remaining' => '0',
+          'X-RateLimit-Reset' => '1704067200'
+        }
+      end
+
+      it 'includes rate_limit in the error' do
+        expect { middleware.on_complete(env) }.to raise_error(Jeckle::TooManyRequestsError) do |error|
+          expect(error.rate_limit).to be_a(Jeckle::RateLimit)
+          expect(error.rate_limit.remaining).to eq 0
+          expect(error.rate_limit.limit).to eq 5000
+        end
+      end
+    end
+
     context 'when status is an unmapped 4xx' do
       let(:status) { 418 }
       let(:reason_phrase) { "I'm a teapot" }
@@ -56,6 +80,30 @@ RSpec.describe Jeckle::Middleware::RaiseError do
       it 'raises Jeckle::ClientError' do
         expect { middleware.on_complete(env) }.to raise_error(Jeckle::ClientError) do |error|
           expect(error.status).to eq 418
+        end
+      end
+    end
+
+    context 'when response includes X-Request-Id header' do
+      let(:status) { 404 }
+      let(:reason_phrase) { 'Not Found' }
+      let(:response_headers) { { 'X-Request-Id' => 'req-abc-123' } }
+
+      it 'includes request_id in the error' do
+        expect { middleware.on_complete(env) }.to raise_error(Jeckle::NotFoundError) do |error|
+          expect(error.request_id).to eq 'req-abc-123'
+        end
+      end
+    end
+
+    context 'when response has no request ID header' do
+      let(:status) { 500 }
+      let(:reason_phrase) { 'Internal Server Error' }
+      let(:response_headers) { {} }
+
+      it 'sets request_id to nil' do
+        expect { middleware.on_complete(env) }.to raise_error(Jeckle::InternalServerError) do |error|
+          expect(error.request_id).to be_nil
         end
       end
     end

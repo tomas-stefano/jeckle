@@ -16,16 +16,37 @@ Style/OpenStructUse:
 Metrics/AbcSize:
   Exclude:
     - lib/jeckle/api.rb
+    - lib/jeckle/request.rb
+    - lib/jeckle/client.rb
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - lib/jeckle/api.rb
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - lib/jeckle/api.rb
 
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
     - "*.gemspec"
 
+Metrics/ParameterLists:
+  Exclude:
+    - lib/jeckle/collection.rb
+    - lib/jeckle/testing.rb
+
 Metrics/MethodLength:
   Exclude:
+    - lib/jeckle/api.rb
     - lib/jeckle/request.rb
     - lib/jeckle/attribute_aliasing.rb
+    - lib/jeckle/middleware/raise_error.rb
+
+Naming/PredicateMethod:
+  AllowedMethods:
+    - destroy
 
 Gemspec/DevelopmentDependencies:
   Enabled: false
@@ -64,6 +85,10 @@ RSpec/MultipleMemoizedHelpers:
 
 RSpec/StubbedMock:
   Enabled: false
+
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - spec/lib/jeckle/auth/oauth2_spec.rb
 
 RSpec/DescribeClass:
   Exclude:

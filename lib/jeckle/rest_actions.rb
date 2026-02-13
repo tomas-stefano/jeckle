@@ -1,28 +1,18 @@
 # frozen_string_literal: true
 
 module Jeckle
+  # REST action methods for Jeckle resources.
   module RESTActions
+    # Collection-level CRUD operations extended onto resource classes.
+    # Includes all individual operation modules for full CRUD support.
+    #
+    # For fine-grained control, extend individual {Jeckle::Operations} modules instead.
     module Collection
-      def find(id)
-        endpoint = "#{resource_name}/#{id}"
-        attributes = run_request(endpoint).response.body
-
-        new attributes
-      end
-
-      def list(params = {})
-        custom_resource_name = params.delete(:resource_name) if params.is_a?(Hash)
-
-        response   = run_request(custom_resource_name || resource_name, params: params).response.body || []
-        collection = response.is_a?(Array) ? response : response[resource_name]
-
-        Array(collection).collect { |attrs| new attrs }
-      end
-
-      def search(params = {})
-        warn '[DEPRECATION] `search` is deprecated. Please use `list` instead.'
-        list(params)
-      end
+      include Jeckle::Operations::Find
+      include Jeckle::Operations::List
+      include Jeckle::Operations::Create
+      include Jeckle::Operations::Update
+      include Jeckle::Operations::Delete
     end
   end
 end

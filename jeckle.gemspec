@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dry-struct', '~> 1.0'
   spec.add_dependency 'dry-types', '~> 1.0'
   spec.add_dependency 'faraday', '~> 2.0'
+  spec.add_dependency 'faraday-retry', '~> 2.0'
 
   spec.add_development_dependency 'bundler', '>= 2.0'
   spec.add_development_dependency 'pry-byebug'
@@ -32,5 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 1.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.0'
   spec.add_development_dependency 'rubocop-rspec', '~> 3.0'
+  spec.add_development_dependency 'simplecov', '~> 0.22'
+  spec.add_development_dependency 'yard'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

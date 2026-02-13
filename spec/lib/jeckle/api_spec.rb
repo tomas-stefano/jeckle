@@ -146,6 +146,148 @@ RSpec.describe Jeckle::API do
     end
   end
 
+  describe '#bearer_token=' do
+    subject(:jeckle_api) { described_class.new }
+
+    before { jeckle_api.base_uri = 'http://example.com' }
+
+    it 'assigns the bearer token' do
+      jeckle_api.bearer_token = 'my-token'
+      expect(jeckle_api.bearer_token).to eq 'my-token'
+    end
+
+    it 'resets the cached connection' do
+      jeckle_api.connection
+      jeckle_api.bearer_token = 'my-token'
+      expect(jeckle_api.connection.builder.handlers).to include Faraday::Request::Authorization
+    end
+  end
+
+  describe '#api_key=' do
+    subject(:jeckle_api) { described_class.new }
+
+    before { jeckle_api.base_uri = 'http://example.com' }
+
+    context 'with header-based api key' do
+      before { jeckle_api.api_key = { value: 'secret', header: 'X-Api-Key' } }
+
+      it 'assigns the api key config' do
+        expect(jeckle_api.api_key).to eq(value: 'secret', header: 'X-Api-Key')
+      end
+
+      it 'sets the header on the connection' do
+        expect(jeckle_api.connection.headers['X-Api-Key']).to eq 'secret'
+      end
+    end
+
+    context 'with param-based api key' do
+      before { jeckle_api.api_key = { value: 'secret', param: 'api_key' } }
+
+      it 'assigns the api key config' do
+        expect(jeckle_api.api_key).to eq(value: 'secret', param: 'api_key')
+      end
+
+      it 'sets the param on the connection' do
+        expect(jeckle_api.connection.params['api_key']).to eq 'secret'
+      end
+    end
+
+    context 'with invalid config' do
+      it 'raises ArgumentError when value is missing' do
+        expect { jeckle_api.api_key = { header: 'X-Api-Key' } }
+          .to raise_error Jeckle::ArgumentError
+      end
+
+      it 'raises ArgumentError when neither header nor param is provided' do
+        expect { jeckle_api.api_key = { value: 'secret' } }
+          .to raise_error Jeckle::ArgumentError
+      end
+    end
+  end
+
+  describe '#pagination' do
+    subject(:jeckle_api) { described_class.new }
+
+    it 'creates an Offset strategy from symbol' do
+      jeckle_api.pagination :offset, page_param: :p
+      expect(jeckle_api.pagination_strategy).to be_a Jeckle::Pagination::Offset
+    end
+
+    it 'creates a Cursor strategy from symbol' do
+      jeckle_api.pagination :cursor, cursor_param: :starting_after
+      expect(jeckle_api.pagination_strategy).to be_a Jeckle::Pagination::Cursor
+    end
+
+    it 'creates a LinkHeader strategy from symbol' do
+      jeckle_api.pagination :link_header
+      expect(jeckle_api.pagination_strategy).to be_a Jeckle::Pagination::LinkHeader
+    end
+
+    it 'accepts a custom strategy instance' do
+      custom = Object.new
+      jeckle_api.pagination custom
+      expect(jeckle_api.pagination_strategy).to eq custom
+    end
+  end
+
+  describe '#retry=' do
+    subject(:jeckle_api) { described_class.new }
+
+    before { jeckle_api.base_uri = 'http://example.com' }
+
+    it 'assigns retry options merged with defaults' do
+      jeckle_api.retry = { max: 5 }
+
+      expect(jeckle_api.retry_options).to include(
+        max: 5,
+        interval: 0.5,
+        interval_randomness: 0.5,
+        backoff_factor: 2,
+        retry_statuses: [429, 500, 502, 503]
+      )
+    end
+
+    it 'allows overriding all defaults' do
+      jeckle_api.retry = { max: 3, interval: 1, retry_statuses: [503] }
+
+      expect(jeckle_api.retry_options).to include(max: 3, interval: 1, retry_statuses: [503])
+    end
+
+    it 'resets the cached connection' do
+      jeckle_api.connection
+      jeckle_api.retry = { max: 3 }
+      expect(jeckle_api.connection.builder.handlers).to include Faraday::Retry::Middleware
+    end
+
+    it 'adds retry middleware to connection' do
+      jeckle_api.retry = { max: 2 }
+      expect(jeckle_api.connection.builder.handlers).to include Faraday::Retry::Middleware
+    end
+  end
+
+  describe '#configure_connection' do
+    subject(:jeckle_api) { described_class.new }
+
+    before { jeckle_api.base_uri = 'http://example.com' }
+
+    it 'calls the customizer block with the connection' do
+      called_with = nil
+      jeckle_api.configure_connection { |conn| called_with = conn }
+
+      connection = jeckle_api.connection
+      expect(called_with).to eq connection
+    end
+
+    it 'runs after middlewares block' do
+      order = []
+      jeckle_api.middlewares { order << :middlewares }
+      jeckle_api.configure_connection { |_conn| order << :customizer }
+
+      jeckle_api.connection
+      expect(order).to eq %i[middlewares customizer]
+    end
+  end
+
   describe '#timeout' do
     let(:timeout) { nil }
     let(:open_timeout) { nil }

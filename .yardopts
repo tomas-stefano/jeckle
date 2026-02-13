@@ -1,0 +1,7 @@
+--markup markdown
+--output-dir doc
+lib/**/*.rb
+-
+README.md
+History.markdown
+LICENSE.txt
