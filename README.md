@@ -167,7 +167,7 @@ class Shot < Jeckle::Resource
 end
 ```
 
-Available types: `Jeckle::Types::Integer`, `String`, `Float`, `Bool`, `Array`, `Hash`, and any [dry-types](https://dry-rb.org/gems/dry-types/) type.
+Available types: `Jeckle::Types::Integer`, `String`, `Float`, `Bool`, `Array`, `Hash`, `DateTime`, `Time`, `Decimal`, `UUID`, `URI`, `SymbolizedHash`, `StringArray`, and any [dry-types](https://dry-rb.org/gems/dry-types/) type.
 
 ## CRUD Operations
 
