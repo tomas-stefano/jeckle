@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+require 'time'
+require 'uri'
+
 module Jeckle
   # Dry::Types container for attribute type definitions.
   #
@@ -12,5 +16,48 @@ module Jeckle
   #   end
   module Types
     include Dry.Types()
+
+    DateTime = Constructor(::DateTime) do |value|
+      case value
+      when ::DateTime then value
+      when ::Time then value.to_datetime
+      when ::String then ::DateTime.parse(value)
+      when ::Integer, ::Float then ::Time.at(value).to_datetime
+      else value
+      end
+    end
+
+    Time = Constructor(::Time) do |value|
+      case value
+      when ::Time then value
+      when ::String then ::Time.parse(value)
+      when ::Integer, ::Float then ::Time.at(value)
+      else value
+      end
+    end
+
+    Decimal = Constructor(::BigDecimal) do |value|
+      case value
+      when ::BigDecimal then value
+      else BigDecimal(value.to_s) # rubocop:disable Lint/BigDecimalNew
+      end
+    end
+
+    UUID = String.constrained(
+      format: /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/i
+    )
+
+    URI = Constructor(::URI) do |value|
+      case value
+      when ::URI then value
+      else ::URI.parse(value.to_s)
+      end
+    end
+
+    SymbolizedHash = Constructor(::Hash) do |value|
+      value.transform_keys(&:to_sym)
+    end
+
+    StringArray = Types::Array.of(Types::Coercible::String)
   end
 end
