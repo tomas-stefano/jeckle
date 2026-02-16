@@ -19,7 +19,6 @@ module Jeckle
 
     DateTime = Constructor(::DateTime) do |value|
       case value
-      when ::DateTime then value
       when ::Time then value.to_datetime
       when ::String then ::DateTime.parse(value)
       when ::Integer, ::Float then ::Time.at(value).to_datetime
@@ -29,7 +28,6 @@ module Jeckle
 
     Time = Constructor(::Time) do |value|
       case value
-      when ::Time then value
       when ::String then ::Time.parse(value)
       when ::Integer, ::Float then ::Time.at(value)
       else value
@@ -39,7 +37,7 @@ module Jeckle
     Decimal = Constructor(::BigDecimal) do |value|
       case value
       when ::BigDecimal then value
-      else BigDecimal(value.to_s) # rubocop:disable Lint/BigDecimalNew
+      else BigDecimal(value.to_s)
       end
     end
 
